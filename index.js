@@ -43,6 +43,7 @@
 		}
 
 		if (_imports && supportsImports) {
+
 			var link = document.createElement('link');
 			var href = _base ? _base + '/' + options.file : options.file;
 
@@ -54,11 +55,14 @@
 			if (current) current.remove();
 
 			link.onload = function(e) {
-				success(link.import, options);
+				options.import = link.import;
+				request(options);
 			};
+
 			link.onerror = function(e) {
 				failure(options);
 			};
+
 			document.head.appendChild(link);
 		} else {
 			// Start XHR with options.
@@ -82,7 +86,8 @@
 			if (jsonTitle) {
 				file = options.json.req[jsonTitle];	
 			} else if (!file) {
-				return complete(options);
+				// If an HTML import occured, call success() with the import as the response.
+				return options.import ? success(options.import, options) : complete(options);
 			}
 		}
 
