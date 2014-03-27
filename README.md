@@ -111,14 +111,11 @@ You can of course initialize byda with options:
 byda({base:'examples', data:'custom', freeze:true});
 ```
 
-######base (string)
-Apply a base path to all of the ajax requests you perform with byda.
-
-######data (string)
-Specify a custom data attribute prefix to use. The default is data-load.
-
-######freeze (boolean)
-Store copies of the index.html byda elements in a variable to serve as a fallback if no corresponding element is specified in a view file.
+| Option        | typeof        | Description 																			 	|
+| ------------- |:-------------:| :---------------------------------------------------------------------------------------- |
+| base      	| string 		| Apply a base path to all of the ajax requests you perform with byda.						|
+| data      	| string      	| Specify a custom data attribute prefix to use. The default is data-load. 					|
+| freeze 		| boolean      	| Store copies of the index.html byda elements in a variable to serve as a fallback if no corresponding element is specified in a view file. |
 
 #####byda.flash(options)
 Returns a `Flash` object:
