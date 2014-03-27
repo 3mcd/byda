@@ -1,0 +1,12 @@
+{
+
+	"days": [
+		{
+			"activities": ["jump-rope", "volleyball"]
+		},
+		{
+			"activities": ["eat", "sleep"]
+		}
+	]
+
+}

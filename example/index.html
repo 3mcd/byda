@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Byda Playground</title>
+
+	<script src="lib/byda.js"></script>
+	<script src="vendor/page-hashbang.js"></script>
+</head>
+<body>
+
+<div data-load="nav">
+	<div>
+		<a href="/">Home</a>
+		<a href="/page/1">Page 1</a>
+		<a href="/page/2">Page 2</a>
+		<a href="/page/3">Page 3</a>
+		<a href="/calendar">Calendar</a>
+		<a href="/failure">This will fail</a>
+	</div>
+</div>
+
+<h1 data-load="title"></h1>
+
+<div data-load="content"></div>
+
+<script>
+
+page.base('');
+
+page('/', function(ctx) {
+	byda({view:'home.byda'});
+});
+
+page('/page/:id', function(ctx) {
+	byda({view: 'page.byda'}, function(elements){
+		elements.title.innerHTML = 'Page ' + ctx.params.id;
+	});
+});
+
+page('/calendar', function(ctx) {
+	byda({view: 'calendar.byda', json: {'example': 'includes/example.json', 'failure': 'adsf.json'}}, function(elements, data) {
+		console.log(data);
+	});
+});
+
+page('/failure', function(ctx) {
+	byda('nonsense');
+});
+
+page({hashbang:true});
+
+page();
+
+</script>
+
+</body>
+</html>
