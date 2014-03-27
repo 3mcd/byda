@@ -130,6 +130,8 @@ Returns a `Flash` object:
 | dom	      	| string      	| A string of custom HTML to use as the DOM when generating list of byda elements Flash#list. Optional. |
 | frozen		| boolean		| Perform cloneNode() on the byda elements before pushing them to the Flash#list.			|
 
+Example:
+
 ```javascript
 var older = byda.flash({frozen: true});
 
@@ -139,6 +141,8 @@ var newer = byda.flash();
 
 newer.compare(older).commit(); // Revert back to the older values 
 ```
+
+Flash API
 
 | Flash#        | typeof        | Description 																			 	|
 | ------------- |:-------------:| :---------------------------------------------------------------------------------------- |
