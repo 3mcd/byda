@@ -3,6 +3,9 @@
 
 byda is a small (~3kb minified) library that allows you to load in ajax content based on HTML 'data-*' attributes. It works great with pushState although doesn't include any history functionality or routing, nor is it a full-featured templating engine (althout it can be manipulated to be used as such).
 
+###Basic Example
+------
+
 ####index.html
 ```html
 ...
@@ -47,7 +50,8 @@ byda is a small (~3kb minified) library that allows you to load in ajax content 
 
 When the index page or the '/home' path (if you're using routing, for example) is accessed, byda will load in HTML wrapped in data-load tags from the file specified. The HTML in the index page's data-load tags will be replaced with the new content.
 
-####Callbacks
+###Callbacks
+------
 
 You can pass a callback to the `byda()` function as the second parameter. The function will be executed with two parameters: `elements` and `data`. 
 
@@ -99,7 +103,8 @@ page();
 
 You can now navigate through your ajax loads with the browser history.
 
-####Public API
+###Public API
+------
 
 #####byda.base
 Set the base path for XHR
