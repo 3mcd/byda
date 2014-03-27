@@ -149,7 +149,7 @@ var newer = byda.flash();
 newer.compare(older).commit(); // Revert back to the older values 
 ```
 
-Flash API
+####Flash API
 
 | Flash#        | typeof        | Description 																			 	|
 | ------------- |:-------------:| :---------------------------------------------------------------------------------------- |
