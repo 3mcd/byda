@@ -33,12 +33,14 @@ byda.init({
 });
 
 page('/', function(ctx) {
-	byda({view:'home.byda'});
+	byda({view:'home.byda'}, function(elements) {
+		elements.name.set('Eric');
+	});
 });
 
 page('/page/:id', function(ctx) {
 	byda({view: 'page.byda'}, function(elements){
-		elements.title.innerHTML = 'Page ' + ctx.params.id;
+		elements.page.set(ctx.params.id);
 	});
 });
 

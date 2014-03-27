@@ -222,7 +222,8 @@
 			if (this.elements[name].length === 1) {
 				condensed[name] = this.elements[name][0];
 			} else {
-				condensed[name] = this.elements[name];
+				condensed[name] = group(this.elements[name]);
+				// condensed[name] = this.elements[name];
 			}
 		}
 
@@ -290,6 +291,18 @@
 			this.changes[_i].swap();
 		}
 	};
+
+	function group(list) {
+		var _list = list;
+
+		_list.set = function(value) {
+			for (_i = 0, _len = _list.length; _i < _len; _i++) {
+				_list[_i].innerHTML = value;
+			}
+		};
+
+		return _list;
+	}
 
 	/**
 	 * Exposed Functions
