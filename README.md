@@ -78,8 +78,7 @@ byda('path/to/file.html', function(elements) {
 
 ```javascript
 function calendar(elements, data) {
-	var days = data.days,
-		activities = data.activities;
+	var activities = data.activities;
 
 	$.each(days, function(index, value) {
 		elements.calendar.append(index + ': ' + activities[index]);
@@ -89,7 +88,6 @@ function calendar(elements, data) {
 var options = {
 	view: 'calendar',
 	json: {
-		'days': 'includes/json/days.json',
 		'activities': 'includes/json/activities.json'
 	}
 }
