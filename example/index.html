@@ -3,7 +3,8 @@
 <head>
 	<title>Byda Playground</title>
 
-	<script src="js/lib/byda.min.js"></script>
+	<script src="vendor/HTMLImports/html-imports.min.js"></script>
+	<script src="../index.js"></script>
 	<script src="vendor/page-hashbang.js"></script>
 </head>
 <body>
@@ -25,7 +26,11 @@
 
 <script>
 
-byda.base('/example')
+byda.init({
+	base: '/example',
+	// imports: true,
+	freeze: true
+});
 
 page('/', function(ctx) {
 	byda({view:'home.byda'});
