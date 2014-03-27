@@ -3,7 +3,7 @@
 
 byda is a small (~3kb minified) library that allows you to load in ajax content based on HTML 'data-*' attributes. It works great with pushState although doesn't include any history functionality or routing, nor is it a full-featured templating engine (althout it can be manipulated to be used as such).
 
-###Basic Example
+##Basic Example
 ------
 
 ####index.html
@@ -50,7 +50,7 @@ byda is a small (~3kb minified) library that allows you to load in ajax content 
 
 When the index page or the '/home' path (if you're using routing, for example) is accessed, byda will load in HTML wrapped in data-load tags from the file specified. The HTML in the index page's data-load tags will be replaced with the new content.
 
-###Callbacks
+##Callbacks
 ------
 
 You can pass a callback to the `byda()` function as the second parameter. The function will be executed with two parameters: `elements` and `data`. 
@@ -103,17 +103,17 @@ page();
 
 You can now navigate through your ajax loads with the browser history.
 
-###Public API
+##Public API
 ------
 
-#####byda.base
+####byda.base
 Set the base path for XHR
 
 ```javascript
 byda.base('/path/to/base');
 ```
 
-#####byda.init
+####byda.init
 You can of course initialize byda with options:
 
 ```javascript
@@ -126,7 +126,7 @@ byda({base:'examples', data:'custom', freeze:true});
 | data      	| string      	| Specify a custom data attribute prefix to use. The default is data-load. 					|
 | freeze 		| boolean      	| Store copies of the index.html byda elements in a variable to serve as a fallback if no corresponding element is specified in a view file. |
 
-#####byda.flash(options)
+####byda.flash(options)
 Returns a `Flash` object:
 
 | Option        | typeof        | Description 																			 	|
@@ -159,9 +159,9 @@ Flash API
 | list 			| array      	| Contains a list of all byda elements on the page. Generated when the Flash is created. 	|
 | organize      | function 		| Organize all elements from Flash#list or an array specified in the first parameter. 		|
 
-#####byda.freeze
+####byda.freeze
 Store copies of the index.html byda elements in a variable to serve as a fallback if no corresponding element is specified in a view file.
 
-#####byda.get
+####byda.get
 Returns an array of all byda elements on the page.
 
