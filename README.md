@@ -99,7 +99,7 @@ page();
 
 You can now navigate through your ajax loads with the browser history.
 
-####Public Functions
+####Public API
 
 #####byda.base
 Set the base path for XHR
