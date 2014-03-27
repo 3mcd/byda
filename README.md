@@ -9,8 +9,9 @@ byda is a small (~3kb minified) library that allows you to load in ajax content 
 ####index.html
 ```html
 ...
-<!-- CSS, JS -->
-<script src="byda.js"></script>
+	<!-- CSS, JS -->
+	<script src="byda.js"></script>
+</head>
 <body>
 	<div class="Header">
 		<h3 class="Header-title">Byda Example</h3>
