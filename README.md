@@ -104,6 +104,10 @@ You can now navigate through your ajax loads with the browser history.
 #####byda.base
 Set the base path for XHR
 
+```javascript
+byda.base('/path/to/base');
+```
+
 #####byda.init
 You can of course initialize byda with options:
 
@@ -119,6 +123,22 @@ byda({base:'examples', data:'custom', freeze:true});
 
 #####byda.flash(options)
 Returns a `Flash` object:
+
+| Option        | typeof        | Description 																			 	|
+| ------------- |:-------------:| :---------------------------------------------------------------------------------------- |
+| condensed  	| string 		| Return a condensed list of byda elements. Does not return a full Flash object.			|
+| dom	      	| string      	| A string of custom HTML to use as the DOM when generating list of byda elements Flash#list. Optional. |
+| frozen		| boolean		| Perform cloneNode() on the byda elements before pushing them to the Flash#list.			|
+
+```javascript
+var older = byda.flash({frozen: true});
+
+// Do something, like edit the value of some byda elements
+
+var newer = byda.flash();
+
+newer.compare(older).commit(); // Revert back to the older values 
+```
 
 | Flash#        | typeof        | Description 																			 	|
 | ------------- |:-------------:| :---------------------------------------------------------------------------------------- |
