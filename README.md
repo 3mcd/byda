@@ -56,6 +56,8 @@ When the index page or the '/home' path (if you're using routing, for example) i
 
 You can pass a callback to the `byda()` function as the second parameter. The function will be executed with two parameters: `elements` and `data`. 
 
+###elements
+
 `elements` is an object that contains all of the byda elements on the page (including inside of newly loaded content) organized by name into arrays called collections.
 
 ```javascript
@@ -70,6 +72,8 @@ Collections currently only have one method, `set()`, which will set the innerHTM
 ```javascript
 elements.day.set(ctx.params.day);
 ```
+
+###data
 
 `data` is an object that contains any json you want to load when calling `byda()`.
 
