@@ -60,11 +60,16 @@ You can pass a callback to the `byda()` function as the second parameter. The fu
 
 ```javascript
 byda('path/to/file.html', function(elements) {
+	// Access the subtitle collection (which has one element inside)
 	elements.subtitle.innerHTML = 'Subtitle value set with JavaScript!';
 });
 ```
 
-Collections currently only have one method, `set()`, which will set the innerHTML of all elements in the collection to a specified string.
+Collections currently only have one method, `set()`, which will set the innerHTML of all elements in the collection to a specified string. This is useful if your collection contains multiple elements that you want to have the same values.
+
+```javascript
+elements.day.set(ctx.params.day);
+```
 
 `data` is an object that contains any json you want to load when calling `byda()`.
 
