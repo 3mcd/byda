@@ -40,13 +40,13 @@ page('/', function(ctx) {
 
 page('/page/:id', function(ctx) {
 	byda({view: 'page.byda'}, function(elements){
-		elements.page.set(ctx.params.id);
+		console.log(elements.page.set(ctx.params.id));
 	});
 });
 
 page('/calendar', function(ctx) {
 	byda({view: 'calendar.byda', json: {'example': 'includes/example.json', 'failure': 'adsf.json'}}, function(elements, data) {
-		console.log(data);
+		elements.subtitle.set('Calendar!');
 	});
 });
 
@@ -54,7 +54,7 @@ page('/failure', function(ctx) {
 	byda('nonsense');
 });
 
-page({hashbang:true});
+// page({hashbang:true});
 
 page();
 

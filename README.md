@@ -56,13 +56,15 @@ When the index page or the '/home' path (if you're using routing, for example) i
 
 You can pass a callback to the `byda()` function as the second parameter. The function will be executed with two parameters: `elements` and `data`. 
 
-`elements` is an object that contains all of the byda elements on the page (including inside of newly loaded content) organized by name into arrays.
+`elements` is an object that contains all of the byda elements on the page (including inside of newly loaded content) organized by name into arrays called collections.
 
 ```javascript
 byda('path/to/file.html', function(elements) {
 	elements.subtitle.innerHTML = 'Subtitle value set with JavaScript!';
 });
 ```
+
+Collections currently only have one method, `set()`, which will set the innerHTML of all elements in the collection to a specified string.
 
 `data` is an object that contains any json you want to load when calling `byda()`.
 
@@ -166,4 +168,3 @@ Store copies of the index.html byda elements in a variable to serve as a fallbac
 
 ###byda.get
 Returns an array of all byda elements on the page.
-

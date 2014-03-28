@@ -216,15 +216,30 @@
 
 	// Compress the flash to contain only a condensed organization of byda elements
 	Flash.prototype.condense = function() {
-		var condensed = {};
+		var collection,
+			condensed = {};
+
+		function collect(group) {
+			var _collection = group;
+
+			_collection.set = function(value) {
+				if (_collection.nodeType) {
+					_collection.innerHTML = value;
+				} else {
+					for (_i = 0, _len = _collection.length; _i < _len; _i++) {
+						_collection[_i].innerHTML = value;
+					}
+				}
+
+				return _collection;
+			};
+
+			return _collection;
+		}
 
 		for (var name in this.elements) {
-			if (this.elements[name].length === 1) {
-				condensed[name] = this.elements[name][0];
-			} else {
-				condensed[name] = group(this.elements[name]);
-				// condensed[name] = this.elements[name];
-			}
+			collection = this.elements[name];
+			condensed[name] = collect(this.elements[name].length === 1 ? this.elements[name][0] : this.elements[name]);
 		}
 
 		return condensed;
@@ -291,18 +306,6 @@
 			this.changes[_i].swap();
 		}
 	};
-
-	function group(list) {
-		var _list = list;
-
-		_list.set = function(value) {
-			for (_i = 0, _len = _list.length; _i < _len; _i++) {
-				_list[_i].innerHTML = value;
-			}
-		};
-
-		return _list;
-	}
 
 	/**
 	 * Exposed Functions
