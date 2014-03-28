@@ -40,12 +40,15 @@ page('/', function(ctx) {
 
 page('/page/:id', function(ctx) {
 	byda({view: 'page.byda'}, function(elements){
-		console.log(elements.page.set(ctx.params.id));
+		elements.page.set(ctx.params.id);
 	});
 });
 
 page('/calendar', function(ctx) {
-	byda({view: 'calendar.byda', json: {'example': 'includes/example.json', 'failure': 'adsf.json'}}, function(elements, data) {
+	byda({
+		view: 'calendar.byda', 
+		json: {'example': 'includes/example.json', 'failure': 'adsf.json'}
+	}, function(elements, data) {
 		elements.subtitle.set('Calendar!');
 	});
 });
