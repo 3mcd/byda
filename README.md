@@ -86,14 +86,11 @@ function calendar(elements, data) {
 	});
 }
 
-var options = {
+byda({
 	view: 'calendar',
-	json: {
-		'activities': 'includes/json/activities.json'
-	}
-}
-
-byda(options, calendar);
+	json: {'activites' : 'includes/json/activities.json'},
+	callback: calendar
+});
 ```
 
 Combining byda with pushState is a good idea. Page.js is a micro-router that lets us utilize pushState routing for our app:
@@ -105,7 +102,7 @@ page('/', function(ctx) {
 
 page('/calendar/:day', function(ctx) {
 	var day = ctx.params.day;
-	byda(options, function(elements, data) {
+	byda(/* options */, function(elements, data) {
 		console.log(data.activities[day]);
 	});
 });
@@ -117,6 +114,16 @@ You can now navigate through your ajax loads with the browser history.
 
 ##Public API
 ------
+
+###byda(options, callback)
+Load data into your document by data attributes through XHR or HTML import (experimental).
+
+| Option        | typeof        | Description 																			 	|
+| ------------- |:-------------:| :---------------------------------------------------------------------------------------- |
+| complete     	| function 		| Callback function that is run after byda is complete. Passed back elements and json data.	|
+| file	     	| string 		| Path to a file to use as the basis for swapping the content of byda elements.				|
+| json      	| string      	| The path to a .json file to load alongside the HTML.										|
+| view	 		| string      	| Shorthand for 'file':'views/' + (path) + '.html'. 										|
 
 ###byda.base
 Set the base path for XHR
@@ -135,6 +142,7 @@ byda({base:'examples', data:'custom', freeze:true});
 | Option        | typeof        | Description 																			 	|
 | ------------- |:-------------:| :---------------------------------------------------------------------------------------- |
 | base      	| string 		| Apply a base path to all of the ajax requests you perform with byda.						|
+| complete     	| function 		| A global complete function that will call after every byda request or import.				|
 | data      	| string      	| Specify a custom data attribute prefix to use. The default is data-load. 					|
 | freeze 		| boolean      	| Store copies of the index.html byda elements in a variable to serve as a fallback if no corresponding element is specified in a view file. |
 | imports 		| boolean      	| Use HTML5 imports instead of XHR (experimental)											|
