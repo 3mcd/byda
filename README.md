@@ -1,7 +1,9 @@
 #byda.js
 ------
 
-byda is a small (~3kb minified) library that allows you to load in ajax content based on HTML 'data-*' attributes. It works great with pushState although doesn't include any history functionality or routing, nor is it a full-featured templating engine (althout it can be manipulated to be used as such).
+byda is a small (~3kb minified) library that allows you to Ajax content into an HTML document in a
+data-attribute specific manner. It works great with pushState although doesn't include any pushState
+functionality, routing or history functionality, nor is it a full-featured templating system.
 
 ##Basic Example
 ------
@@ -122,7 +124,7 @@ You can now navigate through your ajax loads with the browser history.
 ------
 
 ###byda(options, callback)
-Load data into your document by data attributes through XHR or HTML import (experimental).
+Load data into your document by data attributes through XHR or HTML5 imports (if the browser supports it and byda was initialized with the 'imports' option = true).
 
 | Option        | typeof        | Description 																			 	|
 | ------------- |:-------------:| :---------------------------------------------------------------------------------------- |
@@ -132,7 +134,7 @@ Load data into your document by data attributes through XHR or HTML import (expe
 | view	 		| string      	| Shorthand for 'file':'views/' + (path) + '.html'. 										|
 
 ###byda.base
-Set the base path for XHR
+Set the base path for XHR and HTML5 imports.
 
 ```javascript
 byda.base('/path/to/base');
@@ -155,7 +157,10 @@ byda({
 | complete     	| function 		| A global complete function that will call after every byda request or import.				|
 | data      	| string      	| Specify a custom data attribute prefix to use. The default is data-load. 					|
 | freeze 		| boolean      	| Store copies of the index.html byda elements in a variable to serve as a fallback if no corresponding element is specified in a view file. |
-| imports 		| boolean      	| Use HTML5 imports instead of XHR (experimental)											|
+| imports* 		| boolean      	| Use HTML5 imports instead of XHR (experimental)											|
+
+######Notes
+*Byda will fallback to XHR if the clients browser does not support HTML5 imports.
 
 ###byda.flash(options)
 Returns a `Flash` object:
