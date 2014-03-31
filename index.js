@@ -189,7 +189,7 @@
 	// Swap the innerHTML value of the index element to the innerHTML value of the loaded element
 	Change.prototype.swap = function() {
 		if (!this.from || !this.to) return;
-		this.from.innerHTML = this.to.innerHTML;
+		this.from.innerHTML = this.to.nodeType ? this.to.innerHTML : this.to;
 	};
 
 	function Collection(group) {
@@ -197,38 +197,69 @@
 		this.value = this.list[0];
 	}
 
-	Collection.prototype.add = function(node) {
-		if (node.nodeType) this.list.push(node);
-		return this;
-	};
-
-	Collection.prototype.get = function() {
-		return this.value;
-	};
-
-	Collection.prototype.set = function(value) {
-		for (_i = 0, _len = this.list.length; _i < _len; _i++) {
-			this.list[_i].innerHTML = value;
-		}
-		this.value = value;
-		return this;
-	};
-
 	// A Flash contains a list of byda elements that can be organized, compared against other
 	// flashes.
 	function Flash(options) {
 		if (!options) options = {};
 		this.changes = [];
-		this.collections = {};
+		this.collections = options.simulated || {};
 		this.list = options.dom ? byda.get(options.dom) : byda.get();
 		this.frozen = options.frozen || false;
 
-		return this.init();
+		if (!options.simulated) return this.init();
 	}
 
 	Flash.prototype.init = function() {
 		this.organize();
 		return this;
+	};
+
+	Flash.prototype.add = function() {
+		if (arguments[0].nodeType) {
+			this.list.push(arguments[0]);
+		} else if ('string' == typeof arguments[0] && arguments[1].nodeType) {
+			this.get(arguments[0]).list.push(arguments[1]);
+		}
+		return this;
+	};
+
+	Flash.prototype.get = function(collection) {
+		return this.collections[collection];
+	};
+
+	Flash.prototype.set = function(name, value) {
+		var collection = this.get(name);
+
+		if (!collection) return;
+
+		for (_i = 0, _len = collection.list.length; _i < _len; _i++) {
+			collection.list[_i].innerHTML = value;
+		}
+
+		collection.value = value;
+
+		return this;
+	};
+
+	// Map a simulated list of changes to the Flash with an object.
+	Flash.prototype.map = function(object) {
+		// Create a dummy collections object.
+		var collections = {};
+
+		// Fill in the collections object with simulated collections.
+		for (var key in object) {
+			if (!collections[key]) collections[key] = { list: [] };
+			collections[key].list.push(object[key]);
+		}
+
+		// Create a new Flash with the object set as the collection.
+		var simulated = new Flash({ simulated: collections });
+
+		// Compare the current Flash to the simulated Flash.
+		this.compare(simulated);
+
+		// Commit any changes that were generated.
+		this.commit();
 	};
 
 	// Compare the contents of one flash against another and generate a list of Change objects
@@ -239,7 +270,7 @@
 		if (!flash) return;
 
 		// Set the source elements equal to frozen elements or elements of the flash of interest.
-		source = _frozen ? _frozen.collections : flash.collections;
+		source = flash.collections;
 
 		for (var collection in source) {
 			// If this flash has that a group of elements with the current collection
@@ -250,6 +281,7 @@
 
 				// Set the 'to' variable to either the flash of interests group or the fallback
 				to = flash.collections[collection] || fallback;
+
 				// Loop over each element in the group and generate a Change, and push the change
 				// object to this.changes.
 				for (_i = 0, _len = to.list.length; _i < _len; _i++) {
@@ -283,9 +315,9 @@
 				this.collections[name] = new Collection();
 
 				// Set value of the collection to the first element added to the collection.
-				this.collections[name].set(el.innerHTML);
+				this.set(name, el.innerHTML);
 			}
-			this.collections[name].add(el);
+			this.add(name, el);
 		}
 
 		return this;

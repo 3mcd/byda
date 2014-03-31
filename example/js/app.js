@@ -8,7 +8,7 @@ var index = 0;
 
 page('/', function(ctx) {
     load({view:'home.byda'}, function(flash) {
-        flash.collections.counter.set('Home visits: ' + index++);
+        flash.set('counter', 'Home visits: ' + index++);
         $('#counterBtn').on('click', function() {
             page('/');
         });
@@ -17,7 +17,7 @@ page('/', function(ctx) {
 
 page('/page/:id', function(ctx) {
     load({view: 'page.byda'}, function(flash){
-        flash.collections.page.set(ctx.params.id);
+        flash.set('page', ctx.params.id);
     });
 });
 
@@ -29,13 +29,7 @@ page('/periodic-table/:row/:num', function(ctx) {
         json: { 'periodic': 'includes/periodic-table.json' }
     }, function(flash, data) {
         var element = isNaN(row) ? data.periodic[row][num] : data.periodic.table[row].elements[num];
-        flash.collections.heading.set('Periodic Table - ' + element.small);
-        flash.collections['full-name'].set(element.name);
-        flash.collections.group.set(element.group);
-        flash.collections.position.set(element.position);
-        flash.collections.molar.set(element.molar);
-        flash.collections.number.set(element.number);
-        flash.collections.electrons.set(JSON.stringify(element.electrons));
+        flash.map(element);
     });
 });
 
@@ -44,8 +38,8 @@ page('/periodic-table', function() {
         view: 'list.byda',
         json: { 'periodic': 'includes/periodic-table.json' }
     }, function(flash, data) {
-        flash.collections.heading.set('Periodic Table');
-        flash.collections.description.set('A list of all elements on the periodic table, each with a small set of data.');
+        flash.set('heading', 'Periodic Table');
+        flash.set('descriptions', 'A list of all elements on the periodic table, each with a small set of data.');
         $.each(data.periodic.table, function(row, value) {
             $('.Card').append('<div class="TableView TableView-divider">Row ' + row + '</div>');
             Util.list(value.elements, 'TableView', '.Card', function(key, element) {
