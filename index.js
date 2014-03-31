@@ -7,9 +7,7 @@
 		_imports = false,
 		_frozen;
 
-	var supportsImports = (function() {
-		return 'import' in document.createElement('link');
-	})();
+	var supportsImports = 'import' in document.createElement('link');
 
 	var noop = function() {};
 
@@ -72,19 +70,19 @@
 
 	// Retrieve the contents of json files specified in options.json and the view specified in options.file.
 	function request(options) {
-		var file = options.file, 
-			jsonTitle,
+		var file = options.file,
+			json,
 			response;
 
 		// Handle .json files
 		if (options.json) {
 			// Get the title of the first request.
-			jsonTitle = Object.keys(options.json.req)[0];
+			json = Object.keys(options.json.req)[0];
 
 			// If a title exists, set the file to the corresponding JSON request. If no title exists
-			// and no file exists, complete byda with the options. 
-			if (jsonTitle) {
-				file = options.json.req[jsonTitle];	
+			// and no file exists, complete byda with the options.
+			if (json) {
+				file = options.json.req[json];
 			} else if (!file) {
 				// If an HTML import occured, call success() with the import as the response.
 				return options.import ? success(options.import, options) : complete(options);
@@ -108,18 +106,18 @@
 		xhr.onreadystatechange = function() {
 			if (xhr.readyState == 4) {
 				if (xhr.status == 200 || (xhr.status === 0 && file.indexOf('file:///') != -1)) {
-					// If there is a jsonTitle, parse the responseText as JSON
-					if (jsonTitle) {
+					// If there is a json, parse the responseText as JSON
+					if (json) {
 						response = JSON.parse(xhr.responseText);
 
 						// If it is a single, default request, set the result to the response for
 						// easy access upon completion. If there are multiple requests, add it to
 						// the results object.
-						if (jsonTitle == 'default') options.json.res = response;
-						else options.json.res[jsonTitle] = response;
+						if (json == 'default') options.json.res = response;
+						else options.json.res[json] = response;
 
 						// Delete the request.
-						delete options.json.req[jsonTitle];
+						delete options.json.req[json];
 
 						// Begin a new request with the remaining options.
 						return request(options);
@@ -129,11 +127,9 @@
 						return success(response, options);
 					}
 				} else {
-					if (jsonTitle) {
-						console.error('Cannot return "' + jsonTitle + '" data.','Could not get: ' + options.json.req[jsonTitle]);
-						
+					if (json) {
 						// Delete the request.
-						delete options.json.req[jsonTitle];
+						delete options.json.req[json];
 
 						// Begin a new request with the remaining options.
 						return request(options);
@@ -177,7 +173,7 @@
 
 		// If a local complete callback was specified, call it with a flash of the updated elements
 		// and any JSON results
-		if (options.callback) options.callback(byda.flash({ condensed: true }), options.json ? options.json.res : null);
+		if (options.callback) options.callback(byda.flash(), options.json ? options.json.res : null);
 	}
 
 	/**
@@ -196,78 +192,68 @@
 		this.from.innerHTML = this.to.innerHTML;
 	};
 
-	// A Flash contains a list of byda elements that can be organized, compared against other 
-	// flashes, and condensed.
+	function Collection(group) {
+		this.list = group || [];
+		this.value = null;
+	}
+
+	Collection.prototype.add = function(node) {
+		this.list.push(node);
+		return this;
+	};
+
+	Collection.prototype.get = function() {
+		return this.value;
+	};
+
+	Collection.prototype.set = function(value) {
+		for (_i = 0, _len = this.list.length; _i < _len; _i++) {
+			this.list[_i].innerHTML = value;
+		}
+		this.value = value;
+		return this;
+	};
+
+	// A Flash contains a list of byda elements that can be organized, compared against other
+	// flashes.
 	function Flash(options) {
 		if (!options) options = {};
 		this.changes = [];
-		this.elements = {};
+		this.collections = {};
 		this.list = options.dom ? byda.get(options.dom) : byda.get();
 		this.frozen = options.frozen || false;
-		this.condensed = options.condensed || false;
 
 		return this.init();
 	}
 
 	Flash.prototype.init = function() {
 		this.organize();
-		if (this.condensed) return this.condense();
-	};
-
-	// Compress the flash to contain only a condensed organization of byda elements
-	Flash.prototype.condense = function() {
-		var collection,
-			condensed = {};
-
-		function collect(group) {
-			var _collection = group;
-
-			_collection.set = function(value) {
-				if (_collection.nodeType) {
-					_collection.innerHTML = value;
-				} else {
-					for (_i = 0, _len = _collection.length; _i < _len; _i++) {
-						_collection[_i].innerHTML = value;
-					}
-				}
-
-				return _collection;
-			};
-
-			return _collection;
-		}
-
-		for (var name in this.elements) {
-			collection = this.elements[name];
-			condensed[name] = collect(this.elements[name].length === 1 ? this.elements[name][0] : this.elements[name]);
-		}
-
-		return condensed;
+		return this;
 	};
 
 	// Compare the contents of one flash against another and generate a list of Change objects
 	Flash.prototype.compare = function(flash) {
 		var _i, _len, change, fallback, to, source;
 
-		// Return if the method was called without a flash or if either flash is condensed.
-		if (!flash || flash.condensed || this.condensed) return;
+		// Return if the method was called without a flash.
+		if (!flash) return;
 
 		// Set the source elements equal to frozen elements or elements of the flash of interest.
-		source = _frozen ? _frozen.elements : flash.elements;
+		source = _frozen ? _frozen.collections : flash.collections;
 
-		for (var name in source) {
-			// If this flash has that a group of elements with the current name  
-			if (this.elements[name]) {
-				// Generate a fallback to either a frozen group of elements or the current 
+		for (var collection in source) {
+			// If this flash has that a group of elements with the current collection
+			if (this.collections[collection]) {
+				// Generate a fallback to either a frozen group of elements or the current
 				// elements.
-				fallback = _frozen ? _frozen.elements[name] : this.elements[name];
+				fallback = _frozen ? _frozen.collections[collection] : this.collections[collection];
 
 				// Set the 'to' variable to either the flash of interests group or the fallback
-				to = flash.elements[name] || fallback;
+				to = flash.collections[collection] || fallback;
 				// Loop over each element in the group and generate a Change, and push the change
 				// object to this.changes.
-				for (_i = 0, _len = to.length; _i < _len; _i++) {
-					change = new Change(this.elements[name][_i], to[_i]);
+				for (_i = 0, _len = to.list.length; _i < _len; _i++) {
+					change = new Change(this.collections[collection].list[_i], to.list[_i]);
 					this.changes.push(change);
 				}
 			}
@@ -284,16 +270,16 @@
 		var _i, _len, el, name;
 
 		// Reset the elements object.
-		this.elements = {};
+		this.collections = {};
 
-		// If list of elements parameter wasn't provided, use the intrinsic list
+		// If list of elements parameter wasn't provided, use the intrinsic list.
 		if (!list) list = this.list;
 
 		for (_i = 0, _len = list.length; _i < _len; _i++) {
 			el = this.frozen ? list[_i].cloneNode(true) : list[_i];
 			name = list[_i].getAttribute('data-' + _suffix);
-			if (!this.elements[name]) this.elements[name] = [];
-			this.elements[name].push(el);
+			if (!this.collections[name]) this.collections[name] = new Collection();
+			this.collections[name].add(el);
 		}
 
 		return this;
@@ -316,9 +302,9 @@
 		// Return if no options parameter was passed.
 		if (!options) return;
 
-		// If the options parameter is a string, assume it is a data attribute suffix. 
-		if ('string' == typeof options) { 
-			_suffix = options; 
+		// If the options parameter is a string, assume it is a data attribute suffix.
+		if ('string' == typeof options) {
+			_suffix = options;
 			return;
 		}
 
@@ -326,6 +312,7 @@
 		if (options.data) _suffix = options.data;
 		if (options.suffix) _suffix = options.suffix;
 
+		// Use HTML imports instead of XHR
 		if (options.imports) _imports = options.imports;
 
 		// Set the base variable to a file path string.
@@ -357,16 +344,10 @@
 	};
 
 	// Make a flash and clone / organize the nodes into the _frozen object. These elements are used
-	// as default innerHTML values if there is no matching element between the index and loaded 
+	// as default innerHTML values if there is no matching element between the index and loaded
 	// file.
 	byda.freeze = function(options) {
-		var data,
-			temp = [];
-
 		_frozen = byda.flash({frozen: true});
-
-		console.log(getSelector() + ' elements are now frozen.');
-
 		return _frozen;
 	};
 

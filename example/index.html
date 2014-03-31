@@ -3,61 +3,127 @@
 <head>
 	<title>Byda Playground</title>
 
-	<script src="vendor/HTMLImports/html-imports.min.js"></script>
+	<style>
+		.Navigation {
+			list-style-type: none;
+			padding: 0;
+			margin: 0;
+		}
+
+		.Navigation > li {
+			display: inline-block;
+			margin-right: 5px;
+		}
+	</style>
+
+	<script src="//cdnjs.cloudflare.com/ajax/libs/zepto/1.1.3/zepto.min.js"></script>
 	<script src="../index.js"></script>
 	<script src="vendor/page-hashbang.js"></script>
+	<script>
+		var Util = function() {};
+		Util.list = function(data, wrapper, container, fn) {
+		var list = [];
+
+		$.each(data, function(key, val) {
+		    list.push(fn(key,val));
+		});
+
+		$( "<div/>", {
+		    "class": wrapper,
+		    html: list.join("")
+		}).appendTo(container);
+	};
+	</script>
 </head>
 <body>
+<header class="Header">
+	<h1 class="Header-heading" data-load="heading"></h1>
+	<nav class="Header-nav" data-load="nav">
+		<ul class="Navigation">
+			<li>
+				<a href="/">Home</a>
+			</li>
+			<li>
+				<a href="/page/1">Page 1</a>
+			</li>
+			<li>
+				<a href="/page/2">Page 2</a>
+			</li>
+			<li>
+				<a href="/periodic-table">Periodic Table</a>
+			</li>
+			<li>
+				<a href="/failure">This will fail</a>
+			</li>
+		</ul>
+	</nav>
+</header>
 
-<div data-load="nav">
-	<div>
-		<a href="/">Home</a>
-		<a href="/page/1">Page 1</a>
-		<a href="/page/2">Page 2</a>
-		<a href="/page/3">Page 3</a>
-		<a href="/calendar">Calendar</a>
-		<a href="/failure">This will fail</a>
-	</div>
-</div>
-
-<h1 data-load="title"></h1>
-
-<div data-load="content"></div>
+<div class="Content" data-load="content">Click on the links above to view examples of byda</div>
 
 <script>
 
-byda.init({
+load.init({
 	base: '/example',
-	imports: true,
+	// imports: true,
 	freeze: true
 });
 
+var index = 0;
+var numbers;
+
 page('/', function(ctx) {
-	byda({view:'home.byda'}, function(elements) {
-		elements.name.set('Eric');
+	load({view:'home.byda'}, function(flash) {
+		numbers = flash.collections.counter;
+		numbers.set(index);
+		$('#counterBtn').on('click' , function(e) {
+			numbers.set(index++);
+		});
 	});
 });
 
 page('/page/:id', function(ctx) {
-	byda({view: 'page.byda'}, function(elements){
-		elements.page.set(ctx.params.id);
+	load({view: 'page.byda'}, function(flash){
+		flash.collections.page.set(ctx.params.id);
 	});
 });
 
-page('/calendar', function(ctx) {
-	byda({
-		view: 'calendar.byda', 
-		json: {'example': 'includes/example.json', 'failure': 'adsf.json'}
-	}, function(elements, data) {
-		elements.subtitle.set('Calendar!');
+page('/periodic-table/:row/:num', function(ctx) {
+	var row = ctx.params.row;
+	var num = ctx.params.num;
+	load({
+		view: 'chemical.byda',
+		json: { 'periodic': 'includes/periodic-table.json' }
+	}, function(flash, data) {
+		var element = data.periodic.table[row].elements[num];
+		flash.collections.heading.set('Periodic Table - ' + element.small);
+		flash.collections.group.set(element.group);
+		flash.collections.position.set(element.position);
+		flash.collections.molar.set(element.molar);
+		flash.collections.number.set(element.number);
+		flash.collections.electrons.set(JSON.stringify(element.electrons));
 	});
 });
+
+page('/periodic-table', function() {
+	load({
+		view: 'list.byda',
+		json: { 'periodic': 'includes/periodic-table.json' }
+	}, function(flash, data) {
+		flash.collections.heading.set('Periodic Table');
+		$.each(data.periodic.table, function(row, value) {
+			$('.Card').append('<div class="TableView TableView-divider">Row ' + row + '</div>');
+			Util.list(value.elements, '.TableView', '.Card', function(key, element) {
+				return '<div class="TableView-cell"><a href="/periodic-table/'+ row + '/' + key +'">' + element.name + '</a></div>';
+			});
+		});
+	});
+});
+
 
 page('/failure', function(ctx) {
-	byda('nonsense');
+	load('nonsense');
 });
-
-// page({hashbang:true});
 
 page();
 
