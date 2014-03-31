@@ -198,7 +198,7 @@
 	}
 
 	Collection.prototype.add = function(node) {
-		this.list.push(node);
+		if (node.nodeType) this.list.push(node);
 		return this;
 	};
 
