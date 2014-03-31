@@ -67,11 +67,17 @@ byda('path/to/file.html', function(flash) {
 });
 ```
 
-Collections currently only have one method, `set()`, which will set the innerHTML of all elements in the collection to a specified string. This is useful if your collection contains multiple elements that you want to have the same values.
+Collections currently have three methods, `get()`, `set()`, and `add()`:
 
 ```javascript
 flash.collections.day.set(ctx.params.day);
 ```
+
+| Method        | Description 																			 	|
+| ------------- |:----------------------------------------------------------------------------------------- |
+| get     		| Get the value of the collection. Defaults to null.										|
+| set	     	| Update the value of the collection.														|
+| add      		| Add an element to the collection.															|
 
 ###data
 
