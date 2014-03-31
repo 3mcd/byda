@@ -1,7 +1,7 @@
 #byda.js
 ------
 
-byda is a small (~3kb minified) library that allows you to Ajax content into an HTML document in a
+byda is a small (~3kb minified) library that allows you to insert Ajax content into an HTML document in a
 data-attribute specific manner. It works great with pushState although doesn't include any pushState
 functionality, routing or history functionality, nor is it a full-featured templating system.
 
