@@ -242,7 +242,10 @@
 	};
 
 	// Map a simulated list of changes to the Flash with an object.
-	Flash.prototype.map = function(object) {
+	Flash.prototype.map = function(object, commit) {
+
+		if (commit !== false) commit = true;
+
 		// Create a dummy collections object.
 		var collections = {};
 
@@ -259,7 +262,9 @@
 		this.compare(simulated);
 
 		// Commit any changes that were generated.
-		this.commit();
+		if (commit) this.commit();
+
+		return this;
 	};
 
 	// Compare the contents of one flash against another and generate a list of Change objects

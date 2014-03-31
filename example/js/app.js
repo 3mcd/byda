@@ -21,6 +21,8 @@ page('/page/:id', function(ctx) {
     });
 });
 
+var forwards, backwards;
+
 page('/periodic-table/:row/:num', function(ctx) {
     var row = ctx.params.row;
     var num = ctx.params.num;
@@ -29,7 +31,9 @@ page('/periodic-table/:row/:num', function(ctx) {
         json: { 'periodic': 'includes/periodic-table.json' }
     }, function(flash, data) {
         var element = isNaN(row) ? data.periodic[row][num] : data.periodic.table[row].elements[num];
-        flash.map(element);
+        forwards = flash.map(element, false);
+        console.log(forwards);
+        backwards = forwards.compare(flash);
     });
 });
 
