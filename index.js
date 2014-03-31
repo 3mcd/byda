@@ -194,7 +194,7 @@
 
 	function Collection(group) {
 		this.list = group || [];
-		this.value = null;
+		this.value = this.list[0];
 	}
 
 	Collection.prototype.add = function(node) {
@@ -276,9 +276,15 @@
 		if (!list) list = this.list;
 
 		for (_i = 0, _len = list.length; _i < _len; _i++) {
-			el = this.frozen ? list[_i].cloneNode(true) : list[_i];
 			name = list[_i].getAttribute('data-' + _suffix);
-			if (!this.collections[name]) this.collections[name] = new Collection();
+			el = this.frozen ? list[_i].cloneNode(true) : list[_i];
+			// Create a new collection if one does not exist with the name.
+			if (!this.collections[name]) {
+				this.collections[name] = new Collection();
+
+				// Set value of the collection to the first element added to the collection.
+				this.collections[name].set(el.innerHTML);
+			}
 			this.collections[name].add(el);
 		}
 

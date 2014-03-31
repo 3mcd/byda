@@ -18,7 +18,7 @@ bound to a specific API.
 </head>
 <body>
 	<div class="Header">
-		<h3 class="Header-title">Byda Example</h3>
+		<h3 class="Header-title" data-load="title">Byda Example</h3>
 		<div class="Header-nav" data-load="navigation">
 			<!-- Navigation loaded here -->
 		</div>
@@ -62,12 +62,12 @@ You can pass a callback to the `byda()` function as the second parameter. The fu
 
 ###flash
 
-The first parameter of the callback will be passed an object that contains all of the newly loaded byda info including an object containing a list of byda elements organized by name into arrays called collections.
+The first parameter of the callback will be passed a Flash object that contains important info about the newly loaded content. This object includes a 'collections' object that contains elements organized by their data-attribute value. Each organization is called a collection.
 
 ```javascript
 byda('path/to/file.html', function(flash) {
 	// Access the subtitle collection (which has one element inside)
-	flash.collections.subtitle.innerHTML = 'Subtitle value set with JavaScript!';
+	console.log(flash.collections.title.innerHTML); // 'Byda Example'
 });
 ```
 
