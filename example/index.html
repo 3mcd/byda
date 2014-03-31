@@ -1,18 +1,78 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Byda Playground</title>
+	<title>Load Content By Data Attribute</title>
 
 	<style>
+
+		*, *:before, *:after {
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: 'Georgia', serif;
+		}
+
+		h1,h2,h3,h4,h5,h6 {
+			font-family: 'Helvetica', Arial, sans-serif;
+		}
+
+		a {
+			color: #333;
+			text-decoration: none;
+		}
+
+		a:hover {
+			color: #666;
+		}
+
+		.Header-heading {
+			text-align: center;
+		}
+
 		.Navigation {
 			list-style-type: none;
 			padding: 0;
 			margin: 0;
+			border: 1px solid #ccc;
 		}
 
 		.Navigation > li {
 			display: inline-block;
-			margin-right: 5px;
+		}
+
+		.Navigation > li:hover {
+			background-color: #228b22;
+		}
+
+		.Navigation > li > a {
+			padding: 1em;
+			display: block;
+		}
+
+		.Navigation > li > a:hover {
+			color: #fff;
+		}
+
+		.Navigation > li > a.is-negative:hover {
+			background-color: #c0473d;
+		}
+
+		.Content {
+			padding: 1em;
+		}
+
+		.TableView {
+			display: inline-block;
+			vertical-align: top;
+			margin: 10px;
+		}
+
+		.TableView-divider {
+			color: #fff;
+			display: block;
+			padding: 1em;
+			background-color: #aaa;
 		}
 	</style>
 
@@ -36,48 +96,51 @@
 	</script>
 </head>
 <body>
-<header class="Header">
-	<h1 class="Header-heading" data-load="heading"></h1>
-	<nav class="Header-nav" data-load="nav">
-		<ul class="Navigation">
-			<li>
-				<a href="/">Home</a>
-			</li>
-			<li>
-				<a href="/page/1">Page 1</a>
-			</li>
-			<li>
-				<a href="/page/2">Page 2</a>
-			</li>
-			<li>
-				<a href="/periodic-table">Periodic Table</a>
-			</li>
-			<li>
-				<a href="/failure">This will fail</a>
-			</li>
-		</ul>
-	</nav>
-</header>
+<div class="Container">
+	<header class="Header">
+		<h1 class="Header-heading" data-load="heading">Byda Examples</h1>
+		<nav class="Header-nav" data-load="nav">
+			<ul class="Navigation">
+				<li>
+					<a href="/">Home</a>
+				</li>
+				<li>
+					<a href="/page/1">Page 1</a>
+				</li>
+				<li>
+					<a href="/page/2">Page 2</a>
+				</li>
+				<li>
+					<a href="/periodic-table">Periodic Table</a>
+				</li>
+				<li>
+					<a href="/failure" class="is-negative">Failure Test</a>
+				</li>
+			</ul>
+		</nav>
+	</header>
 
-<div class="Content" data-load="content">Click on the links above to view examples of byda</div>
-
+	<div class="Content" data-load="content">
+		<p>
+			Click on the links above to view examples of byda.
+		</p>
+	</div>
+</div>
 <script>
 
 load.init({
 	base: '/example',
-	// imports: true,
+	imports: false, // Set this to true to enable HTML imports
 	freeze: true
 });
 
 var index = 0;
-var numbers;
 
 page('/', function(ctx) {
 	load({view:'home.byda'}, function(flash) {
-		numbers = flash.collections.counter;
-		numbers.set(index);
-		$('#counterBtn').on('click' , function(e) {
-			numbers.set(index++);
+		flash.collections.counter.set('Home visits: ' + index++);
+		$('#counterBtn').on('click', function() {
+			page('/');
 		});
 	});
 });
@@ -97,6 +160,7 @@ page('/periodic-table/:row/:num', function(ctx) {
 	}, function(flash, data) {
 		var element = data.periodic.table[row].elements[num];
 		flash.collections.heading.set('Periodic Table - ' + element.small);
+		flash.collections['full-name'].set(element.name);
 		flash.collections.group.set(element.group);
 		flash.collections.position.set(element.position);
 		flash.collections.molar.set(element.molar);
@@ -113,7 +177,7 @@ page('/periodic-table', function() {
 		flash.collections.heading.set('Periodic Table');
 		$.each(data.periodic.table, function(row, value) {
 			$('.Card').append('<div class="TableView TableView-divider">Row ' + row + '</div>');
-			Util.list(value.elements, '.TableView', '.Card', function(key, element) {
+			Util.list(value.elements, 'TableView', '.Card', function(key, element) {
 				return '<div class="TableView-cell"><a href="/periodic-table/'+ row + '/' + key +'">' + element.name + '</a></div>';
 			});
 		});
