@@ -162,7 +162,7 @@ page('/periodic-table/:row/:num', function(ctx) {
 		view: 'chemical.byda',
 		json: { 'periodic': 'includes/periodic-table.json' }
 	}, function(flash, data) {
-		var element = data.periodic.table[row].elements[num];
+		var element = isNaN(row) ? data.periodic[row][num] : data.periodic.table[row].elements[num];
 		flash.collections.heading.set('Periodic Table - ' + element.small);
 		flash.collections['full-name'].set(element.name);
 		flash.collections.group.set(element.group);
@@ -179,11 +179,22 @@ page('/periodic-table', function() {
 		json: { 'periodic': 'includes/periodic-table.json' }
 	}, function(flash, data) {
 		flash.collections.heading.set('Periodic Table');
+		flash.collections.description.set('A list of all elements on the periodic table, each with a small set of data.');
 		$.each(data.periodic.table, function(row, value) {
 			$('.Card').append('<div class="TableView TableView-divider">Row ' + row + '</div>');
 			Util.list(value.elements, 'TableView', '.Card', function(key, element) {
 				return '<div class="TableView-cell"><a href="/periodic-table/'+ row + '/' + key +'">' + element.name + '</a></div>';
 			});
+		});
+
+		$('.Card').append('<div class="TableView TableView-divider">Actinoids</div>');
+		Util.list(data.periodic.actinoids, 'TableView', '.Card', function(key, element) {
+			return '<div class="TableView-cell"><a href="/periodic-table/actinoids/' + key +'">' + element.name + '</a></div>';
+		});
+
+		$('.Card').append('<div class="TableView TableView-divider">Lanthanoids</div>');
+		Util.list(data.periodic.lanthanoids, 'TableView', '.Card', function(key, element) {
+			return '<div class="TableView-cell"><a href="/periodic-table/lanthanoids/' + key +'">' + element.name + '</a></div>';
 		});
 	});
 });
