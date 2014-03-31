@@ -56,21 +56,21 @@ When the index page or the '/home' path (if you're using routing, for example) i
 
 You can pass a callback to the `byda()` function as the second parameter. The function will be executed with two parameters: `collections` and `data`.
 
-###collections
+###flash
 
-The first parameter of the callback will be passed an object that contains all of the collections on the page (including inside of newly loaded content) organized by name into arrays called collections.
+The first parameter of the callback will be passed an object that contains all of the newly loaded byda info including an object containing a list of byda elements organized by name into arrays called collections.
 
 ```javascript
-byda('path/to/file.html', function(collections) {
+byda('path/to/file.html', function(flash) {
 	// Access the subtitle collection (which has one element inside)
-	collections.subtitle.innerHTML = 'Subtitle value set with JavaScript!';
+	flash.collections.subtitle.innerHTML = 'Subtitle value set with JavaScript!';
 });
 ```
 
 Collections currently only have one method, `set()`, which will set the innerHTML of all elements in the collection to a specified string. This is useful if your collection contains multiple elements that you want to have the same values.
 
 ```javascript
-collections.day.set(ctx.params.day);
+flash.collections.day.set(ctx.params.day);
 ```
 
 ###data
@@ -78,11 +78,11 @@ collections.day.set(ctx.params.day);
 `data` is an object that contains any json you want to load when calling `byda()`.
 
 ```javascript
-function calendar(collections, data) {
+function calendar(flash, data) {
 	var activities = data.activities;
 
 	$.each(days, function(index, value) {
-		elements.calendar.append(index + ': ' + activities[index]);
+		flash.collections.calendar.append(index + ': ' + activities[index]);
 	});
 }
 
@@ -102,7 +102,7 @@ page('/', function(ctx) {
 
 page('/calendar/:day', function(ctx) {
 	var day = ctx.params.day;
-	byda(/* options */, function(elements, data) {
+	byda(/* options */, function(collections, data) {
 		console.log(data.activities[day]);
 	});
 });
@@ -120,7 +120,7 @@ Load data into your document by data attributes through XHR or HTML import (expe
 
 | Option        | typeof        | Description 																			 	|
 | ------------- |:-------------:| :---------------------------------------------------------------------------------------- |
-| complete     	| function 		| Callback function that is run after byda is complete. Passed back elements and json data.	|
+| complete     	| function 		| Callback function that is run after byda is complete. Passed back flash and json data.	|
 | file	     	| string 		| Path to a file to use as the basis for swapping the content of byda elements.				|
 | json      	| string      	| The path to a .json file to load alongside the HTML.										|
 | view	 		| string      	| Shorthand for 'file':'views/' + (path) + '.html'. 										|
@@ -136,7 +136,11 @@ byda.base('/path/to/base');
 You can of course initialize byda with options:
 
 ```javascript
-byda({base:'examples', data:'custom', freeze:true});
+byda({
+	base: '/examples',
+	data: 'foo', // will now look for elements with the attribute called 'data-foo'
+	freeze: true
+});
 ```
 
 | Option        | typeof        | Description 																			 	|
