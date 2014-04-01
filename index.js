@@ -284,7 +284,7 @@
 
 	// Get the value of a collection.
 	Flash.prototype.get = function(collection) {
-		return this.collections[collection].value;
+		return this.collections[collection];
 	};
 
 	// Set the value of a collection.

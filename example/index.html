@@ -62,6 +62,14 @@
 			background-color: #c0473d;
 		}
 
+		.Navigation > li > a.is-primary:hover {
+			background-color: #475fc0;
+		}
+
+		.Navigation > li > a.is-standard:hover {
+			background-color: #aaa;
+		}
+
 		.Content {
 			padding: 1em;
 		}
@@ -91,7 +99,7 @@
 		<nav class="Header-nav" data-load="nav">
 			<ul class="Navigation">
 				<li>
-					<a href="/">Home</a>
+					<a href="/" class="is-standard">Home</a>
 				</li>
 				<li>
 					<a href="/page/1">Page 1</a>
@@ -100,7 +108,7 @@
 					<a href="/page/2">Page 2</a>
 				</li>
 				<li>
-					<a href="/periodic-table">Periodic Table</a>
+					<a href="/periodic-table" class="is-primary">Periodic Table</a>
 				</li>
 				<li>
 					<a href="/failure" class="is-negative">Failure Test</a>
