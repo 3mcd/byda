@@ -1,20 +1,25 @@
 /*! Byda.js v0.0.1 || Eric McDaniel */
 ;(function() {
 
-	var _globalComplete,
-		_suffix = 'load',
-		_base = window.location.origin,
-		_imports = false,
-		_frozen;
+	'use strict';
 
+	var _base, // Default base path.
+		_frozen, // Stores a frozen flash.
+		_globalComplete, // Stores a callback function called after Byda is complete.
+		_imports = false, // Disable HTML5 imports by default.
+		_suffix = 'load'; // Default data-attribute suffix.
+
+	// Check to see if the browser supports HTML5 imports.
 	var supportsImports = 'import' in document.createElement('link');
 
+	// An empty callback function.
 	var noop = function() {};
 
 	/**
 	 * Core Functions
 	 */
 
+	// Get the data attribute selector that is used across Byda.
 	function getSelector() {
 		return '[data-' + _suffix + ']';
 	}
@@ -40,27 +45,41 @@
 			options.json = { req: options.json, res: {} };
 		}
 
+		// If Byda was initialized with imports: true and the browser supports imports, use HTML5
+		// imports.
 		if (_imports && supportsImports) {
 
+			// Create a new <link> element.
 			var link = document.createElement('link');
+
+			// Define an href variable that contains the link to the file/view being loaded.
 			var href = _base ? _base + '/' + options.file : options.file;
 
+			// Set the rel attribute of the link element to 'import' and the href to the href
+			// variable.
 			link.rel = 'import';
 			link.href = href;
 
+			// Detect a current link element with an identical href value.
 			var current = document.querySelector('link[href="' + href + '"]');
 
+			// If it exists, remove it from the DOM.
 			if (current) current.remove();
 
+			// When the link attribute is done loading, reference the import contents with
+			// the options.import property and start a new request to catch any json requests
+			// that were passed in the options.
 			link.onload = function(e) {
 				options.import = link.import;
 				request(options);
 			};
 
+			// Error handler
 			link.onerror = function(e) {
 				failure(options);
 			};
 
+			// Append the newly created link element to the head of the document.
 			document.head.appendChild(link);
 		} else {
 			// Start XHR with options.
@@ -68,11 +87,12 @@
 		}
 	}
 
-	// Retrieve the contents of json files specified in options.json and the view specified in options.file.
+	// Retrieve the contents of json files specified in options.json and the view specified in
+	// options.file.
 	function request(options) {
-		var file = options.file,
-			json,
-			response;
+		var file = options.file, // The file (if any) that the XHR will attempt to GET.
+			json, // Stores the title of a json request (if any).
+			response; // Stores the raw responseText or JSON parsed responseText.
 
 		// Handle .json files
 		if (options.json) {
@@ -80,7 +100,7 @@
 			json = Object.keys(options.json.req)[0];
 
 			// If a title exists, set the file to the corresponding JSON request. If no title exists
-			// and no file exists, complete byda with the options.
+			// and no file exists, complete Byda with the options.
 			if (json) {
 				file = options.json.req[json];
 			} else if (!file) {
@@ -89,32 +109,41 @@
 			}
 		}
 
-		// Create a new XMLHttpRequest.
+		// Abort if xhr exists and the readyState is less than 4 (complete).
 		if (xhr && xhr.readyState < 4) {
 			xhr.onreadystatechange = noop;
 			xhr.abort();
 		}
 
+		// Create a new XMLHtttpRequest.
 		var xhr = new XMLHttpRequest();
 
 		// If a base path is specified, prepend it to the file path.
 		file = _base ? _base + '/' + file : file;
 
+		// Open the XHR.
 		xhr.open('GET', file, true);
 		xhr.setRequestHeader('X-BYDA', 'true');
 
+		// Detect readystatechange.
 		xhr.onreadystatechange = function() {
+			// If the readyState is 4 (complete):
 			if (xhr.readyState == 4) {
+				// and the XHR status returns 200 (got the file) or the file string contains
+				// "file:///" (important for mobile/PhoneGap applications)
 				if (xhr.status == 200 || (xhr.status === 0 && file.indexOf('file:///') != -1)) {
-					// If there is a json, parse the responseText as JSON
+					// If there is a json, parse the responseText as JSON.
 					if (json) {
 						response = JSON.parse(xhr.responseText);
 
 						// If it is a single, default request, set the result to the response for
 						// easy access upon completion. If there are multiple requests, add it to
 						// the results object.
-						if (json == 'default') options.json.res = response;
-						else options.json.res[json] = response;
+						if (json == 'default') {
+							options.json.res = response;
+						} else {
+							options.json.res[json] = response;
+						}
 
 						// Delete the request.
 						delete options.json.req[json];
@@ -123,10 +152,12 @@
 						return request(options);
 					} else {
 						response = xhr.responseText;
-						// Return the XHR result and options to the success function
+						// Return the XHR result and options to the success function.
 						return success(response, options);
 					}
+				// The file was not found.
 				} else {
+					// If the request was a JSON request:
 					if (json) {
 						// Delete the request.
 						delete options.json.req[json];
@@ -134,7 +165,7 @@
 						// Begin a new request with the remaining options.
 						return request(options);
 					}
-					// Couldn't find the view file.
+					// Couldn't find the view file, so no content could be loaded.
 					return failure(options);
 				}
 			}
@@ -158,7 +189,7 @@
 		// Swap all content from the elements of the index page with the flash of the result DOM.
 		flash.commit();
 
-		// Complete byda with the options.
+		// Complete Byda with the options.
 		complete(options);
 	}
 
@@ -193,34 +224,55 @@
 	};
 
 	// Swap the innerHTML value of the index element to the innerHTML value of the loaded element
+	// or the value of a simulated element if this.to is not a node.
 	Change.prototype.swap = function() {
 		if (!this.from || !this.to) return;
 		this.from.innerHTML = this.to.nodeType ? this.to.innerHTML : this.to;
 		return this;
 	};
 
+	// A Collection contains a list of Byda elements that can be manipulated with Flash#add, and a
+	// value that can be get and set with Flash#get and Flash#set.
 	function Collection(group) {
 		this.list = group || [];
 		this.value = this.list[0];
 	}
 
-	// A Flash contains a list of byda elements that can be organized, compared against other
+	// A Flash contains a list of Byda elements that can be organized, compared against other
 	// flashes.
 	function Flash(options) {
+		// If no options were passed, create a new empty options object.
 		if (!options) options = {};
+
+		// An array of changes to commit.
 		this.changes = [];
+
+		// A new object that contains the Flash collections that is either empty or contains a
+		// simulated group of collections.
 		this.collections = options.simulated || {};
+
+		// Collect a flat list of the Byda elements by calling byda.get() with either an imported
+		// DOM if one was passed or no DOM. In the case of no DOM, the byda.get() will use the
+		// document.
 		this.list = options.dom ? byda.get(options.dom) : byda.get();
+
+		// Set the flash to frozen or not. If frozen is passed, the Byda elements will be cloned
+		// when initialized; therefore, the collections will contained cloned elements and not
+		// references to elements on the page.
 		this.frozen = options.frozen || false;
 
+		// If the Flash is not simulated, initialize it.
 		if (!options.simulated) return this.init();
 	}
 
+	// Initialize the Flash.
 	Flash.prototype.init = function() {
+		// Organize the flash when it is constructed.
 		this.organize();
 		return this;
 	};
 
+	// Add an element to the flash's list or a specified collection in the flash.
 	Flash.prototype.add = function() {
 		if (arguments[0].nodeType) {
 			this.list.push(arguments[0]);
@@ -230,12 +282,14 @@
 		return this;
 	};
 
+	// Get the value of a collection.
 	Flash.prototype.get = function(collection) {
-		return this.collections[collection];
+		return this.collections[collection].value;
 	};
 
+	// Set the value of a collection.
 	Flash.prototype.set = function(name, value) {
-		var collection = this.get(name);
+		var _i, _len, collection = this.get(name);
 
 		if (!collection) return;
 
@@ -311,7 +365,7 @@
 		return this;
 	};
 
-	// Organize a list of byda elements into groups by byda data value.
+	// Organize a list of elements into groups by their Byda data-attribute value.
 	Flash.prototype.organize = function(list) {
 		var _i, _len, el, name;
 
@@ -349,7 +403,7 @@
 	 * Exposed Functions
 	 */
 
-	// Initialize byda with options.
+	// Initialize Byda with options.
 	byda.init = function(options) {
 		// Return if no options parameter was passed.
 		if (!options) return;
