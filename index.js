@@ -304,7 +304,6 @@
 				// object to this.changes.
 				for (_i = 0, _len = to.list.length; _i < _len; _i++) {
 					this.changes.push(new Change(this.collections[collection].list[_i], to.list[_i]));
-					flash.changes.push(new Change(to.list[_i], this.collections[collection].list[_i]));
 				}
 			}
 		}
