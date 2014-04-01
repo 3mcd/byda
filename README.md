@@ -1,7 +1,11 @@
 #byda.js
 ------
 
-byda is a small (~3kb minified) library that allows you to load in ajax content based on HTML 'data-*' attributes. It works great with pushState although doesn't include any history functionality or routing, nor is it a full-featured templating engine (althout it can be manipulated to be used as such).
+byda is a small (~3kb minified) library that allows you to insert Ajax content into HTML documents in a
+data-attribute specific manner. It works great with pushState but doesn't include any pushState
+functionality, routing or history functionality, nor is it a full-featured templating system. This means
+you can integrate it with your own desired routing, templating, or pushState implemenation without being
+bound to a specific API.
 
 ##Basic Example
 ------
@@ -14,7 +18,7 @@ byda is a small (~3kb minified) library that allows you to load in ajax content 
 </head>
 <body>
 	<div class="Header">
-		<h3 class="Header-title">Byda Example</h3>
+		<h3 class="Header-title" data-load="title">Byda Example</h3>
 		<div class="Header-nav" data-load="navigation">
 			<!-- Navigation loaded here -->
 		</div>
@@ -54,35 +58,37 @@ When the index page or the '/home' path (if you're using routing, for example) i
 ##Callbacks
 ------
 
-You can pass a callback to the `byda()` function as the second parameter. The function will be executed with two parameters: `elements` and `data`. 
+You can pass a callback to the `byda()` function as the second parameter. The function will be executed with two parameters: `collections` and `data`.
 
-`elements` is an object that contains all of the byda elements on the page (including inside of newly loaded content) organized by name into arrays.
+###flash
+
+The first parameter of the callback will be passed a Flash object that contains important info about the newly loaded content. This object includes a 'collections' object that contains elements organized by their data-attribute value. Each organization is called a collection.
 
 ```javascript
-byda('path/to/file.html', function(elements) {
-	elements.subtitle.innerHTML = 'Subtitle value set with JavaScript!';
+byda('path/to/file.html', function(flash) {
+	// Access the title collection (which contains one element)
+	console.log(flash.collections.title.innerHTML); // 'Byda Example'
 });
 ```
+
+###data
 
 `data` is an object that contains any json you want to load when calling `byda()`.
 
 ```javascript
-function calendar(elements, data) {
+function calendar(flash, data) {
 	var activities = data.activities;
 
 	$.each(days, function(index, value) {
-		elements.calendar.append(index + ': ' + activities[index]);
+		flash.collections.calendar.append(index + ': ' + activities[index]);
 	});
 }
 
-var options = {
+byda({
 	view: 'calendar',
-	json: {
-		'activities': 'includes/json/activities.json'
-	}
-}
-
-byda(options, calendar);
+	json: {'activites' : 'includes/json/activities.json'},
+	callback: calendar
+});
 ```
 
 Combining byda with pushState is a good idea. Page.js is a micro-router that lets us utilize pushState routing for our app:
@@ -94,7 +100,7 @@ page('/', function(ctx) {
 
 page('/calendar/:day', function(ctx) {
 	var day = ctx.params.day;
-	byda(options, function(elements, data) {
+	byda(/* options */, function(collections, data) {
 		console.log(data.activities[day]);
 	});
 });
@@ -107,8 +113,18 @@ You can now navigate through your ajax loads with the browser history.
 ##Public API
 ------
 
+###byda(options, callback)
+Load data into your document by data attributes through XHR or HTML5 imports (if the browser supports it and byda was initialized with the 'imports' option = true).
+
+| Option        | typeof        | Description 																			 	|
+| ------------- |:-------------:| :---------------------------------------------------------------------------------------- |
+| complete     	| function 		| Callback function that is run after byda is complete. Passed back flash and json data.	|
+| file	     	| string 		| Path to a file to use as the basis for swapping the content of byda elements.				|
+| json      	| string      	| The path to a .json file to load alongside the HTML.										|
+| view	 		| string      	| Shorthand for 'file':'views/' + (path) + '.html'. 										|
+
 ###byda.base
-Set the base path for XHR
+Set the base path for XHR and HTML5 imports.
 
 ```javascript
 byda.base('/path/to/base');
@@ -118,22 +134,29 @@ byda.base('/path/to/base');
 You can of course initialize byda with options:
 
 ```javascript
-byda({base:'examples', data:'custom', freeze:true});
+byda({
+	base: '/examples',
+	data: 'foo', // will now look for elements with the attribute called 'data-foo'
+	freeze: true
+});
 ```
 
 | Option        | typeof        | Description 																			 	|
 | ------------- |:-------------:| :---------------------------------------------------------------------------------------- |
 | base      	| string 		| Apply a base path to all of the ajax requests you perform with byda.						|
+| complete     	| function 		| A global complete function that will call after every byda request or import.				|
 | data      	| string      	| Specify a custom data attribute prefix to use. The default is data-load. 					|
 | freeze 		| boolean      	| Store copies of the index.html byda elements in a variable to serve as a fallback if no corresponding element is specified in a view file. |
-| imports 		| boolean      	| Use HTML5 imports instead of XHR (experimental)											|
+| imports* 		| boolean      	| Use HTML5 imports instead of XHR (experimental)											|
+
+######Notes
+*Byda will fallback to XHR if the clients browser does not support HTML5 imports.
 
 ###byda.flash(options)
 Returns a `Flash` object:
 
 | Option        | typeof        | Description 																			 	|
 | ------------- |:-------------:| :---------------------------------------------------------------------------------------- |
-| condensed  	| string 		| Return a condensed list of byda elements. Does not return a full Flash object.			|
 | dom	      	| string      	| A string of custom HTML to use as the DOM when generating list of byda elements Flash#list. Optional. |
 | frozen		| boolean		| Perform cloneNode() on the byda elements before pushing them to the Flash#list.			|
 
@@ -146,24 +169,26 @@ var older = byda.flash({frozen: true});
 
 var newer = byda.flash();
 
-newer.compare(older).commit(); // Revert back to the older values 
+newer.compare(older).commit(); // Revert back to the older values
 ```
 
 ####Flash API
 
-| Flash#        | typeof        | Description 																			 	|
-| ------------- |:-------------:| :---------------------------------------------------------------------------------------- |
-| changes      	| array 		| Contains a list of all changes generated by Flash#compare. 								|
-| commit      	| function      | Perform the changes. 																		|
-| compare 		| function      | Compare flash with another flash to generate an array of changes stored in Flash#changes. |
-| condense      | function 		| Returns a condensed organization of byda elements. 										|
-| elements      | object      	| An organization of byda elements on the page. 											|
-| list 			| array      	| Contains a list of all byda elements on the page. Generated when the Flash is created. 	|
-| organize      | function 		| Organize all elements from Flash#list or an array specified in the first parameter. 		|
+| Flash# 						        | typeof        | Description 																			 	|
+| ------------------------------------- |:-------------:| :---------------------------------------------------------------------------------------- |
+| add(element / collection, element) 	| function		| Add an element to the flash list or a collection.											|
+| changes      							| array 		| Contains a list of all changes generated by Flash#compare. 								|
+| commit      							| function      | Perform the changes. 																		|
+| compare(flash) 						| function      | Compare flash with another flash to generate an array of changes stored in Flash#changes. |
+| elements      						| object      	| An organization of byda elements on the page. 											|
+| get(collection)     					| function		| Get the value of a collection. Defaults to null.											|
+| list 									| array      	| Contains a list of all byda elements on the page. Generated when the Flash is created. 	|
+| map(object)     						| function		| Map a simple data structure object against the Flash and compare/commit the changes. 		|
+| organize      						| function 		| Organize all elements from Flash#list or an array specified in the first parameter. 		|
+| set(collection, value)	     		| function		| Update the value of a collection.															|
 
 ###byda.freeze
 Store copies of the index.html byda elements in a variable to serve as a fallback if no corresponding element is specified in a view file.
 
 ###byda.get
 Returns an array of all byda elements on the page.
-

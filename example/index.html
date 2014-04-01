@@ -1,62 +1,120 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Byda Playground</title>
+	<title>Load Content By Data Attribute</title>
 
-	<script src="vendor/HTMLImports/html-imports.min.js"></script>
+	<style>
+
+		*, *:before, *:after {
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: 'Georgia', serif;
+		}
+
+		h1,h2,h3,h4,h5,h6 {
+			font-family: 'Helvetica', Arial, sans-serif;
+		}
+
+		a {
+			color: #333;
+			text-decoration: none;
+		}
+
+		a:hover {
+			color: #666;
+		}
+
+		.Container {
+			min-width: 540px;
+		}
+
+		.Header-heading {
+			text-align: center;
+		}
+
+		.Navigation {
+			list-style-type: none;
+			padding: 0;
+			margin: 0;
+			border: 1px solid #ccc;
+		}
+
+		.Navigation > li {
+			display: inline-block;
+		}
+
+		.Navigation > li:hover {
+			background-color: #228b22;
+		}
+
+		.Navigation > li > a {
+			padding: 1em;
+			display: block;
+		}
+
+		.Navigation > li > a:hover {
+			color: #fff;
+		}
+
+		.Navigation > li > a.is-negative:hover {
+			background-color: #c0473d;
+		}
+
+		.Content {
+			padding: 1em;
+		}
+
+		.TableView {
+			display: inline-block;
+			vertical-align: top;
+			margin: 10px;
+		}
+
+		.TableView-divider {
+			color: #fff;
+			display: block;
+			padding: 1em;
+			background-color: #aaa;
+		}
+	</style>
+
+	<script src="//cdnjs.cloudflare.com/ajax/libs/zepto/1.1.3/zepto.min.js"></script>
 	<script src="../index.js"></script>
 	<script src="vendor/page-hashbang.js"></script>
 </head>
 <body>
+<div class="Container">
+	<header class="Header">
+		<h1 class="Header-heading" data-load="heading">Byda Examples</h1>
+		<nav class="Header-nav" data-load="nav">
+			<ul class="Navigation">
+				<li>
+					<a href="/">Home</a>
+				</li>
+				<li>
+					<a href="/page/1">Page 1</a>
+				</li>
+				<li>
+					<a href="/page/2">Page 2</a>
+				</li>
+				<li>
+					<a href="/periodic-table">Periodic Table</a>
+				</li>
+				<li>
+					<a href="/failure" class="is-negative">Failure Test</a>
+				</li>
+			</ul>
+		</nav>
+	</header>
 
-<div data-load="nav">
-	<div>
-		<a href="/">Home</a>
-		<a href="/page/1">Page 1</a>
-		<a href="/page/2">Page 2</a>
-		<a href="/page/3">Page 3</a>
-		<a href="/calendar">Calendar</a>
-		<a href="/failure">This will fail</a>
+	<div class="Content" data-load="content">
+		<p>
+			Click on the links above to view examples of byda.
+		</p>
 	</div>
 </div>
-
-<h1 data-load="title"></h1>
-
-<div data-load="content"></div>
-
-<script>
-
-byda.init({
-	base: '/example',
-	imports: true,
-	freeze: true
-});
-
-page('/', function(ctx) {
-	byda({view:'home.byda'});
-});
-
-page('/page/:id', function(ctx) {
-	byda({view: 'page.byda'}, function(elements){
-		elements.title.innerHTML = 'Page ' + ctx.params.id;
-	});
-});
-
-page('/calendar', function(ctx) {
-	byda({view: 'calendar.byda', json: {'example': 'includes/example.json', 'failure': 'adsf.json'}}, function(elements, data) {
-		console.log(data);
-	});
-});
-
-page('/failure', function(ctx) {
-	byda('nonsense');
-});
-
-page({hashbang:true});
-
-page();
-
-</script>
-
+<script src="js/app.js"></script>
 </body>
 </html>
