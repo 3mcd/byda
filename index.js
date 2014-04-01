@@ -186,10 +186,17 @@
 		this.to = to;
 	}
 
+	Change.prototype.reverse = function() {
+		this.from = this.to;
+		this.to = this.from;
+		return this;
+	};
+
 	// Swap the innerHTML value of the index element to the innerHTML value of the loaded element
 	Change.prototype.swap = function() {
 		if (!this.from || !this.to) return;
 		this.from.innerHTML = this.to.nodeType ? this.to.innerHTML : this.to;
+		return this;
 	};
 
 	function Collection(group) {
@@ -242,9 +249,10 @@
 	};
 
 	// Map a simulated list of changes to the Flash with an object.
-	Flash.prototype.map = function(object, commit) {
+	Flash.prototype.map = function(object, options) {
+		if (!options) options = {};
 
-		if (commit !== false) commit = true;
+		if (options.commit !== false) options.commit = true;
 
 		// Create a dummy collections object.
 		var collections = {};
@@ -255,14 +263,16 @@
 			collections[key].list.push(object[key]);
 		}
 
+		options.simulated = collections;
+
 		// Create a new Flash with the object set as the collection.
-		var simulated = new Flash({ simulated: collections });
+		var simulated = new Flash(options);
 
 		// Compare the current Flash to the simulated Flash.
 		this.compare(simulated);
 
 		// Commit any changes that were generated.
-		if (commit) this.commit();
+		if (options.commit) this.commit();
 
 		return this;
 	};
@@ -273,6 +283,9 @@
 
 		// Return if the method was called without a flash.
 		if (!flash) return;
+
+		// Reset the changes object.
+		this.changes = [];
 
 		// Set the source elements equal to frozen elements or elements of the flash of interest.
 		source = flash.collections;
@@ -290,14 +303,11 @@
 				// Loop over each element in the group and generate a Change, and push the change
 				// object to this.changes.
 				for (_i = 0, _len = to.list.length; _i < _len; _i++) {
-					change = new Change(this.collections[collection].list[_i], to.list[_i]);
-					this.changes.push(change);
+					this.changes.push(new Change(this.collections[collection].list[_i], to.list[_i]));
+					flash.changes.push(new Change(to.list[_i], this.collections[collection].list[_i]));
 				}
 			}
 		}
-
-		// Give the flash of interest a list of changes as well
-		flash.changes = this.changes;
 
 		return this;
 	};

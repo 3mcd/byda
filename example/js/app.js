@@ -31,9 +31,8 @@ page('/periodic-table/:row/:num', function(ctx) {
         json: { 'periodic': 'includes/periodic-table.json' }
     }, function(flash, data) {
         var element = isNaN(row) ? data.periodic[row][num] : data.periodic.table[row].elements[num];
-        forwards = flash.map(element, false);
-        console.log(forwards);
-        backwards = forwards.compare(flash);
+
+        flash.map(element, { commit: true });
     });
 });
 
@@ -43,7 +42,7 @@ page('/periodic-table', function() {
         json: { 'periodic': 'includes/periodic-table.json' }
     }, function(flash, data) {
         flash.set('heading', 'Periodic Table');
-        flash.set('descriptions', 'A list of all elements on the periodic table, each with a small set of data.');
+        flash.set('description', 'A list of all elements on the periodic table, each with a small set of data.');
         $.each(data.periodic.table, function(row, value) {
             $('.Card').append('<div class="TableView TableView-divider">Row ' + row + '</div>');
             Util.list(value.elements, 'TableView', '.Card', function(key, element) {
