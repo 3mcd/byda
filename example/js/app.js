@@ -1,3 +1,26 @@
+/**
+ * Utilities
+ */
+
+var Util = function() {};
+
+Util.list = function(data, wrapper, container, fn) {
+    var list = [];
+
+    $.each(data, function(key, val) {
+        list.push(fn(key,val));
+    });
+
+    $( "<div/>", {
+        "class": wrapper,
+        html: list.join("")
+    }).appendTo(container);
+};
+
+/**
+ * Initialize
+ */
+
 load.init({
     base: '/example',
     imports: false, // Set this to true to enable HTML imports
@@ -5,6 +28,10 @@ load.init({
 });
 
 var index = 0;
+
+/**
+ * Routes
+ */
 
 page('/', function(ctx) {
     load({view:'home.byda'}, function(flash) {
