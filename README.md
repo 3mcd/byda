@@ -134,7 +134,7 @@ byda.base('/path/to/base');
 You can of course initialize byda with options:
 
 ```javascript
-byda({
+byda.init({
 	base: '/examples',
 	data: 'foo', // will now look for elements with the attribute called 'data-foo'
 	freeze: true,
