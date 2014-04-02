@@ -1,6 +1,6 @@
 /*! Byda.js v0.0.1 || Eric McDaniel */
 ;(function() {
-	console.log("test feature 2!!!!");
+	console.log("test feature 2!!!! Github Account Fix!!");
 	
 	var _globalComplete,
 		_suffix = 'load',
