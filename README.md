@@ -1,11 +1,15 @@
 #byda.js
 ------
 
-byda is a small (~3kb minified) library that allows you to insert Ajax content into HTML documents in a
+byda is a small (~4kb minified) library that allows you to insert Ajax content into HTML documents in a
 data-attribute specific manner. It works great with pushState but doesn't include any pushState
 functionality, routing or history functionality, nor is it a full-featured templating system. This means
 you can integrate it with your own desired routing, templating, or pushState implemenation without being
 bound to a specific API.
+
+byda has a very thin implementation of localStorage and caching that allows for data persistence. You can
+also listen for changes by way of the 'byda' event that emits when your content changes to sync data with
+outside databases or caches.
 
 ##Basic Example
 ------
@@ -144,10 +148,12 @@ byda({
 | Option        | typeof        | Description 																			 	|
 | ------------- |:-------------:| :---------------------------------------------------------------------------------------- |
 | base      	| string 		| Apply a base path to all of the ajax requests you perform with byda.						|
+| cache 		| object      	| Synchronize byda collections with an object.												|
 | complete     	| function 		| A global complete function that will call after every byda request or import.				|
 | data      	| string      	| Specify a custom data attribute prefix to use. The default is data-load. 					|
 | freeze 		| boolean      	| Store copies of the index.html byda elements in a variable to serve as a fallback if no corresponding element is specified in a view file. |
 | imports* 		| boolean      	| Use HTML5 imports instead of XHR (experimental)											|
+| localCache 	| object      	| Synchronize byda collections with a local cache such as localStorage to make your data persist. |
 
 ######Notes
 *Byda will fallback to XHR if the clients browser does not support HTML5 imports.
@@ -163,13 +169,23 @@ Returns a `Flash` object:
 Example:
 
 ```javascript
-var older = byda.flash({frozen: true});
+page('/notepad/:id', function(ctx) {
+	// Set the notepad variable to the id prefixed with 'notepad-'. This is our notepad collection name.
+	var notepad = 'notepad-' + ctx.params.id;
+	byda({view: 'notepad'}, function(flash) {
+		// Append the notepad to the page.
+		$('.Notes').append('<textarea id="notepad" data-load="' + notes + '"></textarea>');
+		// Create a new flash with the updated DOM. Could also call flash.update() and just use the flash that was passed back
+        newFlash = byda.flash();
+        // Set the notepad collection to the cached collection value.
+        newFlash.set(notes);
+        // When the input value changes, set the notepad collection value to the textarea value.
+        $('#notepad').on('input propertychange', function() {
+            newFlash.set(notes, $(this).val());
+        });
+	});
 
-// Do something, like edit the value of some byda elements
-
-var newer = byda.flash();
-
-newer.compare(older).commit(); // Revert back to the older values
+});
 ```
 
 ####Flash API
@@ -185,7 +201,8 @@ newer.compare(older).commit(); // Revert back to the older values
 | list 									| array      	| Contains a list of all byda elements on the page. Generated when the Flash is created. 	|
 | map(object)     						| function		| Map a simple data structure object against the Flash and compare/commit the changes. 		|
 | organize      						| function 		| Organize all elements from Flash#list or an array specified in the first parameter. 		|
-| set(collection, value)	     		| function		| Update the value of a collection.															|
+| set(collection, value)	     		| function		| Update the value of a collection.	If a value is not passed, the collection will be set with a cached value if one exists. |
+| update					    		| function		| Refresh the flash with a new list of byda elements and organize them into	collections 	|
 
 ###byda.freeze
 Store copies of the index.html byda elements in a variable to serve as a fallback if no corresponding element is specified in a view file.
