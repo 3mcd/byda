@@ -54,6 +54,10 @@
 			display: block;
 		}
 
+		.Navigation > li > a.is-active {
+			background-color: #ddd;
+		}
+
 		.Navigation > li > a:hover {
 			color: #fff;
 		}
@@ -86,6 +90,14 @@
 			padding: 1em;
 			background-color: #aaa;
 		}
+
+		#notepad {
+			width: 100%;
+			min-height: 300px;
+			padding: 1em;
+			font-size: 1em;
+			font-family: 'Georgia', serif;
+		}
 	</style>
 
 	<script src="//cdnjs.cloudflare.com/ajax/libs/zepto/1.1.3/zepto.min.js"></script>
@@ -95,6 +107,7 @@
 <body>
 <div class="Container">
 	<header class="Header">
+		<p>Welcome, <span data-load="username"></span>.</p>
 		<h1 class="Header-heading" data-load="heading">Byda Examples</h1>
 		<nav class="Header-nav" data-load="nav">
 			<ul class="Navigation">
@@ -102,10 +115,13 @@
 					<a href="/" class="is-standard">Home</a>
 				</li>
 				<li>
-					<a href="/page/1">Page 1</a>
+					<a href="/settings">Settings</a>
 				</li>
 				<li>
-					<a href="/page/2">Page 2</a>
+					<a href="/page/1" class="is-primary">Page 1</a>
+				</li>
+				<li>
+					<a href="/page/2" class="is-primary">Page 2</a>
 				</li>
 				<li>
 					<a href="/periodic-table" class="is-primary">Periodic Table</a>
