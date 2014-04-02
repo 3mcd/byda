@@ -21,6 +21,8 @@
 
 	console.log('A test feature');
 
+	console.log('A super awesome test feature from HELL');
+
 	// Parse options and begin XHR
 	function byda(options, callback) {
 		// byda() is shorthand for byda.freeze();
