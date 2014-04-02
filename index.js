@@ -1,6 +1,7 @@
 /*! Byda.js v0.0.1 || Eric McDaniel */
 ;(function() {
-
+	console.log("test feature 2!!!!");
+	
 	var _globalComplete,
 		_suffix = 'load',
 		_base = window.location.origin,
