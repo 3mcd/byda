@@ -23,6 +23,10 @@ Util.list = function(data, wrapper, container, fn) {
 
 var simCache = {};
 
+$(window).on('byda', function(e) {
+
+});
+
 load.init({
     base: '/example',
     imports: false, // Set this to true to enable HTML imports
