@@ -62,7 +62,7 @@ When the index page or the '/home' path (if you're using routing, for example) i
 ##Callbacks
 ------
 
-You can pass a callback to the `byda()` function as the second parameter. The function will be executed with two parameters: `collections` and `data`.
+You can pass a callback to the `byda()` function as the second parameter. The function will be executed with two parameters: `flash` and `data`.
 
 ###flash
 
