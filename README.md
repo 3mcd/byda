@@ -214,5 +214,5 @@ Returns an array of all byda elements on the page.
 ####Collection API
 | Collection# 	| parameters 			| typeof        | Description 								|
 | -------------	| :-------------------:	|:-------------:| :---------------------------------------- |
-| get   		| value			 		| function 		| Set the value of the collection. 			|
-| set    		|  						| function     	| Return the value of the collection. 		|
+| get    		|  						| function     	| Return the value of the collection. 		|
+| set   		| value			 		| function 		| Set the value of the collection. 			|
