@@ -1,6 +1,5 @@
 #byda.js
-------
-####v0.0.1
+###v0.0.1
 
 byda is a small (~4kb minified) library that allows you to insert Ajax content into HTML documents in a
 data-attribute specific manner. It works great with pushState but doesn't include any pushState
@@ -12,7 +11,6 @@ The library supplies a very thin set of features for localStorage. You can also 
 of the 'byda' event that emits when your content changes to sync data with outside databases or caches.
 
 ##Basic Example
-------
 
 ####index.html
 ```html
@@ -60,7 +58,6 @@ of the 'byda' event that emits when your content changes to sync data with outsi
 When the index page or the '/home' path (if you're using routing, for example) is accessed, byda will load in HTML wrapped in data-load tags from the file specified. The HTML in the index page's data-load tags will be replaced with the new content.
 
 ##Callbacks
-------
 
 You can pass a callback to the `byda()` function as the second parameter. The function will be executed with two parameters: `flash` and `data`.
 
@@ -115,7 +112,6 @@ page();
 You can now navigate through your ajax loads with the browser history.
 
 ##Public API
-------
 
 ###byda(options, callback)
 Load data into your document by data attributes through XHR or HTML5 imports (if the browser supports it and byda was initialized with the 'imports' option = true).
