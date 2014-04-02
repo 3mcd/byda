@@ -68,7 +68,7 @@ The first parameter of the callback will be passed a Flash object that contains 
 ```javascript
 byda('path/to/file.html', function(flash) {
 	// Access the title collection (which contains one element)
-	console.log(flash.collections.title.innerHTML); // 'Byda Example'
+	console.log(flash.get('title')); // 'Byda Example'
 });
 ```
 
