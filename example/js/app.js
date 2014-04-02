@@ -88,13 +88,6 @@ page('/settings', function(ctx) {
         ctx: ctx,
         view: 'settings.byda'
     }, function(flash) {
-
-        flash.set('notepad');
-
-        $('#notepad').on('input propertychange', function() {
-            flash.set('notepad', $(this).val());
-        });
-
         flash.set('username');
 
         $('#name').bind('input propertychange', function() {
