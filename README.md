@@ -141,7 +141,8 @@ You can of course initialize byda with options:
 byda({
 	base: '/examples',
 	data: 'foo', // will now look for elements with the attribute called 'data-foo'
-	freeze: true
+	freeze: true,
+	localCache: localStorage
 });
 ```
 
