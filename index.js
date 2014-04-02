@@ -1,7 +1,6 @@
 /*! Byda.js v0.0.1 || Eric McDaniel */
 ;(function() {
-	console.log("test feature 2!!!! Github Account Fix!!");
-	
+
 	var _globalComplete,
 		_suffix = 'load',
 		_base = window.location.origin,
@@ -19,10 +18,6 @@
 	function getSelector() {
 		return '[data-' + _suffix + ']';
 	}
-
-	console.log('A test feature');
-
-	console.log('A super awesome test feature from HELL');
 
 	// Parse options and begin XHR
 	function byda(options, callback) {
