@@ -367,14 +367,6 @@
 		return this;
 	};
 
-	Flash.prototype.get = function(name) {
-		var collection = this.find(name);
-
-		if (!collection) return;
-
-		return collection.get();
-	};
-
 	// Map a simulated list of changes to the Flash with an object.
 	Flash.prototype.map = function(object, options) {
 		if (!options) options = {};
