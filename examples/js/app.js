@@ -28,7 +28,7 @@ $(window).on('byda', function(e) {
 });
 
 load.init({
-    base: '/example',
+    base: '/examples',
     imports: false, // Set this to true to enable HTML imports
     freeze: true,
     localCache: localStorage,
