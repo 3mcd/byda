@@ -7,9 +7,8 @@ functionality, routing or history functionality, nor is it a full-featured templ
 you can integrate it with your own desired routing, templating, or pushState implementation without being
 bound to any specific API.
 
-byda has a very thin implementation of localStorage and caching that allows for data persistence. You can
-also listen for changes by way of the 'byda' event that emits when your content changes to sync data with
-outside databases or caches.
+The library supplies a very thin set of features for localStorage. You can also listen for changes by way
+of the 'byda' event that emits when your content changes to sync data with outside databases or caches.
 
 ##Basic Example
 ------
