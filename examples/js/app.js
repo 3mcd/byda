@@ -51,8 +51,6 @@ page('/', function(ctx) {
         view:'home.byda',
         ctx: ctx
     }, function(flash) {
-        var current = flash.get('counter');
-
         flash.set('username');
         flash.set('counter');
 
