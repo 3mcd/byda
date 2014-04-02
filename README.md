@@ -167,7 +167,7 @@ Returns a `Flash` object:
 | dom	      	| string      	| A string of custom HTML to use as the DOM when generating list of byda elements Flash#list. Optional. |
 | frozen		| boolean		| Perform cloneNode() on the byda elements before pushing them to the Flash#list.			|
 
-Example:
+Example (with caching):
 
 ```javascript
 page('/notepad/:id', function(ctx) {
