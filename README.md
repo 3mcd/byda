@@ -171,16 +171,19 @@ Example (with caching):
 
 ```javascript
 page('/notepad/:id', function(ctx) {
-	// Set the notepad variable to the id prefixed with 'notepad-'. This is our notepad collection name.
+	// Set the notepad variable to the id prefixed with 'notepad-'. This is our notepad
+	// collection name.
 	var notepad = 'notepad-' + ctx.params.id;
 	byda({view: 'notepad'}, function(flash) {
 		// Append the notepad to the page.
 		$('.Notes').append('<textarea id="notepad" data-load="' + notes + '"></textarea>');
-		// Create a new flash with the updated DOM. Could also call flash.update() and just use the flash that was passed back
+		// Create a new flash with the updated DOM. Could also call flash.update() and
+		// just use the flash that was passed back
         newFlash = byda.flash();
         // Set the notepad collection to the cached collection value.
         newFlash.set(notes);
-        // When the input value changes, set the notepad collection value to the textarea value.
+        // When the input value changes, set the notepad collection value to the textarea
+        // value.
         $('#notepad').on('input propertychange', function() {
             newFlash.set(notes, $(this).val());
         });
