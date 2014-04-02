@@ -342,12 +342,8 @@
 	};
 
 	// Add an element to the flash's list or a specified collection in the flash.
-	Flash.prototype.add = function() {
-		if (arguments[0].nodeType) {
-			this.list.push(arguments[0]);
-		} else if ('string' == typeof arguments[0] && arguments[1].nodeType) {
-			this.find(arguments[0]).list.push(arguments[1]);
-		}
+	Flash.prototype.add = function(name, node) {
+		if ('string' == typeof name && node.nodeType) this.find(name).list.push(node);
 		return this;
 	};
 
