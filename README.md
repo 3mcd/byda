@@ -4,8 +4,8 @@
 byda is a small (~4kb minified) library that allows you to insert Ajax content into HTML documents in a
 data-attribute specific manner. It works great with pushState but doesn't include any pushState
 functionality, routing or history functionality, nor is it a full-featured templating system. This means
-you can integrate it with your own desired routing, templating, or pushState implemenation without being
-bound to a specific API.
+you can integrate it with your own desired routing, templating, or pushState implementation without being
+bound to any specific API.
 
 byda has a very thin implementation of localStorage and caching that allows for data persistence. You can
 also listen for changes by way of the 'byda' event that emits when your content changes to sync data with
