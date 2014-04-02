@@ -197,7 +197,7 @@ page('/notepad/:id', function(ctx) {
 | commit    |  						| function     	| Perform the changes. 																		|
 | compare 	| flash 				| function     	| Compare flash with another flash to generate an array of changes stored in Flash#changes. |
 | elements  | 						| object      	| An organization of byda elements on the page. 											|
-| get     	| collection 			| function		| Get the value of a collection. Defaults to null.											|
+| find  	| string				| function      | Finds and returns a collection by name. 													|
 | list 		| 						| array      	| Contains a list of all byda elements on the page. Generated when the Flash is created. 	|
 | map   	| object 				| function		| Map a simple data structure object against the Flash and compare/commit the changes. 		|
 | organize  | 						| function 		| Organize all elements from Flash#list or an array specified in the first parameter. 		|
