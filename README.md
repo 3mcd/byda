@@ -81,7 +81,7 @@ function calendar(flash, data) {
 	var activities = data.activities;
 
 	$.each(days, function(index, value) {
-		flash.collections.calendar.append(index + ': ' + activities[index]);
+		$('#calendar').append(index + ': ' + activities[index]);
 	});
 }
 
