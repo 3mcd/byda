@@ -19,6 +19,8 @@
 		return '[data-' + _suffix + ']';
 	}
 
+	console.log('A test feature');
+
 	// Parse options and begin XHR
 	function byda(options, callback) {
 		// byda() is shorthand for byda.freeze();
