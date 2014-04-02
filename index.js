@@ -325,14 +325,13 @@
 		this.frozen = options.frozen || false;
 
 		// If the Flash is not simulated, initialize it.
-		if (!options.simulated) return this.init();
+		if (!options.simulated) this.init();
 	}
 
 	// Initialize the Flash.
 	Flash.prototype.init = function() {
 		// Organize the flash when it is constructed.
 		this.organize();
-		return this;
 	};
 
 	Flash.prototype.update = function() {
