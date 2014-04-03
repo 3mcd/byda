@@ -101,6 +101,8 @@ byda({
 });
 ```
 
+##pushState
+
 Combining byda with pushState is a good idea. Page.js is a micro-router that
 lets us utilize pushState routing for our app:
 
