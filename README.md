@@ -15,11 +15,10 @@ changes to sync data with outside databases or caches.
 ### Concept
 
 Byda will create an object (flash) that contains organizations of elements on
-the page arranged by data-attribute (collections) that can then be compared
-against other flashes to generate lists of changes to perform. Byda's core
-functions will be exposed as a basic content-swapping/templating library, but
-the APIs of `Flash` and `Store` are also exposed to provide more options to
-authors.
+the page arranged by data-attribute (stores) that can then be compared against
+other flashes to generate lists of changes to perform. Byda's core functions
+will be exposed as a basic content-swapping/templating library, but the APIs of
+`Flash` and `Store` are also exposed to provide more options to authors.
 
 ##Basic Example
 
