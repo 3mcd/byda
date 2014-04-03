@@ -83,7 +83,7 @@ byda('path/to/file.html', function(flash) {
 
 ###data
 
-`data` is an object that contains any JSON you want to with your view.
+`data` is an object that contains any JSON you want to load with your view.
 
 ```javascript
 function calendar(flash, data) {
@@ -201,7 +201,8 @@ page('/notepad/:id', function(ctx) {
 ```
 
 ###byda.freeze
-Reference copies of the index.html byda elements to serve as a fallback if no corresponding element is served in a view file.
+Reference copies of the index.html byda elements to serve as a fallback if no
+corresponding element is served in a view file.
 
 ###byda.get
 Returns an array of all byda elements on the page.
