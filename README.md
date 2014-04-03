@@ -1,14 +1,16 @@
 #byda.js
 ###v0.0.1
 
-byda is a small (~4kb minified) library that allows you to insert Ajax content into HTML documents in a
-data-attribute specific manner. It works great with pushState but doesn't include any pushState
-functionality, routing or history functionality, nor is it a full-featured templating system. This means
-you can integrate it with your own desired routing, templating, or pushState implementation without being
-bound to any specific API.
+byda is a small (~4kb minified) library that allows you to insert Ajax content
+into HTML documents in a data-attribute specific manner. It works great with
+pushState but doesn't include any pushState functionality, routing or history
+functionality, nor is it a full-featured templating system. This means you can
+integrate it with your own desired routing, templating, or pushState
+implementation without being bound to any specific API.
 
-The library supplies a very thin set of features for localStorage. You can also listen for changes by way
-of the 'byda' event that emits when your content changes to sync data with outside databases or caches.
+The library supplies a very thin set of features for localStorage. You can also
+listen for changes by way of the 'byda' event that emits when your content
+changes to sync data with outside databases or caches.
 
 ##Basic Example
 
@@ -55,26 +57,33 @@ of the 'byda' event that emits when your content changes to sync data with outsi
 </a>
 ```
 
-When the index page or the '/home' path (if you're using routing, for example) is accessed, byda will load in HTML wrapped in data-load tags from the file specified. The HTML in the index page's data-load tags will be replaced with the new content.
+When the index page or the '/home' path (if you're using routing, for example)
+is accessed, byda will load in HTML wrapped in data-load tags from the file
+specified. The HTML in the index page's data-load tags will be replaced with
+the new content.
 
 ##Callbacks
 
-You can pass a callback to the `byda()` function as the second parameter. The function will be executed with two parameters: `flash` and `data`.
+You can pass a callback to the `byda()` function as the second parameter. The
+function will be executed with two parameters: `flash` and `data`.
 
 ###flash
 
-The first parameter of the callback will be passed a Flash object that contains important info about the newly loaded content. This object includes a 'collections' object that contains elements organized by their data-attribute value. Each organization is called a collection.
+The first parameter of the callback will be passed a Flash object that contains
+important info about the newly loaded content. This object includes a 'stores'
+object that contains elements organized by their data-attribute value. Each
+organization is called a store.
 
 ```javascript
 byda('path/to/file.html', function(flash) {
-	// Access the title collection (which contains one element)
-	console.log(flash.get('title')); // 'Byda Example'
+	// Access the title store (which contains one element)
+	console.log(flash.find('title').get()); // 'Byda Example'
 });
 ```
 
 ###data
 
-`data` is an object that contains any json you want to load when calling `byda()`.
+`data` is an object that contains any JSON you want to with your view.
 
 ```javascript
 function calendar(flash, data) {
@@ -92,7 +101,8 @@ byda({
 });
 ```
 
-Combining byda with pushState is a good idea. Page.js is a micro-router that lets us utilize pushState routing for our app:
+Combining byda with pushState is a good idea. Page.js is a micro-router that
+lets us utilize pushState routing for our app:
 
 ```javascript
 page('/', function(ctx) {
@@ -114,14 +124,16 @@ You can now navigate through your ajax loads with the browser history.
 ##Public API
 
 ###byda(options, callback)
-Load data into your document by data attributes through XHR or HTML5 imports (if the browser supports it and byda was initialized with the 'imports' option = true).
+Load data into your document by data attributes through XHR or HTML5 imports
+(if the browser supports it and byda was initialized with the 'imports' option =
+true).
 
-| Option        | typeof        | Description 																			 	|
-| ------------- |:-------------:| :---------------------------------------------------------------------------------------- |
-| complete     	| function 		| Callback function that is run after byda is complete. Passed back flash and json data.	|
-| file	     	| string 		| Path to a file to use as the basis for swapping the content of byda elements.				|
-| json      	| string      	| The path to a .json file to load alongside the HTML.										|
-| view	 		| string      	| Shorthand for 'file':'views/' + (path) + '.html'. 										|
+| Option   | typeof   | Description                                                                      |
+|----------|----------|----------------------------------------------------------------------------------|
+| complete | function | Function that is called after byda is complete. Passed back flash and JSON data. |
+| file     | string   | Path to a file to use as the basis for swapping the content of byda elements.    |
+| json     | string   | The path to a .json file to load alongside the view.                             |
+| view     | string   | Shorthand for `{ file: 'views/' + path + '.html' }`                              |
 
 ###byda.base
 Set the base path for XHR and HTML5 imports.
@@ -142,15 +154,15 @@ byda.init({
 });
 ```
 
-| Option        | typeof        | Description 																			 	|
-| ------------- |:-------------:| :---------------------------------------------------------------------------------------- |
-| base      	| string 		| Apply a base path to all of the ajax requests you perform with byda.						|
-| cache 		| object      	| Synchronize byda collections with an object.												|
-| complete     	| function 		| A global complete function that will call after every byda request or import.				|
-| data      	| string      	| Specify a custom data attribute prefix to use. The default is data-load. 					|
-| freeze 		| boolean      	| Store copies of the index.html byda elements in a variable to serve as a fallback if no corresponding element is specified in a view file. |
-| imports* 		| boolean      	| Use HTML5 imports instead of XHR (experimental)											|
-| localCache 	| object      	| Synchronize byda collections with a local cache such as localStorage to make your data persist. |
+| Option     | typeof   | Description                                                                                                                              |
+|------------|----------|------------------------------------------------------------------------------------------------------------------------------------------|
+| base       | string   | Prepend a base path to all of the requests and imports you perform with byda.                                                            |
+| cache      | object   | Synchronize byda stores with an object.                                                                                                  |
+| complete   | function | A global complete function that will call after byda is finished.                                                                        |
+| data       | string   | Specify a custom data attribute prefix to use. The default is data-load.                                                                 |
+| freeze     | boolean  | Store copies of the template byda elements in a variable to serve as a fallback if no corresponding element is found in a view or cache. |
+| imports    | boolean  | Use HTML5 imports instead of XHR                                                                                                         |
+| localCache | object   | Synchronize byda stores with a local cache such as localStorage to make your data persist.                                               |
 
 ######Notes
 *Byda will fallback to XHR if the clients browser does not support HTML5 imports.
@@ -158,10 +170,10 @@ byda.init({
 ###byda.flash(options)
 Returns a `Flash` object:
 
-| Option        | typeof        | Description 																			 	|
-| ------------- |:-------------:| :---------------------------------------------------------------------------------------- |
-| dom	      	| string      	| A string of custom HTML to use as the DOM when generating list of byda elements Flash#list. Optional. |
-| frozen		| boolean		| Perform cloneNode() on the byda elements before pushing them to the Flash#list.			|
+| Option | typeof  | Description                                                          |
+|--------|---------|----------------------------------------------------------------------|
+| dom    | string  | A string to be parsed as HTML when generating list of byda elements. |
+| frozen | boolean | Clone elements before before pushing them to the list.               |
 
 Example (with caching):
 
@@ -178,7 +190,7 @@ page('/notepad/:id', function(ctx) {
         newFlash = byda.flash();
         // Set the notepad collection to the cached collection value.
         newFlash.set(notes);
-        // When the input value changes, set the notepad collection value to the textarea
+        // When the input value changes, set the notFepad collection value to the textarea
         // value.
         $('#notepad').on('input propertychange', function() {
             newFlash.set(notes, $(this).val());
@@ -189,7 +201,7 @@ page('/notepad/:id', function(ctx) {
 ```
 
 ###byda.freeze
-Store copies of the index.html byda elements in a variable to serve as a fallback if no corresponding element is specified in a view file.
+Reference copies of the index.html byda elements to serve as a fallback if no corresponding element is served in a view file.
 
 ###byda.get
 Returns an array of all byda elements on the page.
@@ -197,22 +209,22 @@ Returns an array of all byda elements on the page.
 
 ####Flash API
 
-| Flash# 	| parameters 			| typeof        | Description 																			 	|
-| --------- | :-------------------:	|:-------------:| :---------------------------------------------------------------------------------------- |
-| add 		| collection, element	| function		| Add an element to the flash list or a collection.											|
-| changes   |  						| array 		| Contains a list of all changes generated by Flash#compare. 								|
-| commit    |  						| function     	| Perform the changes. 																		|
-| compare 	| flash 				| function     	| Compare flash with another flash to generate an array of changes stored in Flash#changes. |
-| elements  | 						| object      	| An organization of byda elements on the page. 											|
-| find  	| name					| function      | Finds and returns a collection by name. 													|
-| list 		| 						| array      	| Contains a list of all byda elements on the page. Generated when the Flash is created. 	|
-| map   	| object 				| function		| Map a simple data structure object against the Flash and compare/commit the changes. 		|
-| organize  | 						| function 		| Organize all elements from Flash#list or an array specified in the first parameter. 		|
-| set	    | name, value 			| function		| Update the value of a collection.	If a value is not passed, the collection will be set with a cached value if one exists. |
-| update	| 						| function		| Refresh the flash with a new list of byda elements and organize them into	collections 	|
+| Property | typeof   | Parameters          | Description                                                                                                  |
+|----------|----------|---------------------|--------------------------------------------------------------------------------------------------------------|
+| add      | function | collection, element | Add an element to a store.                                                                                   |
+| find     | function | name                | Return a store by name.                                                                                      |
+| generate | function | flash               | Compare to another flash and push the changes to the stores.                                                 |
+| list     | array    |                     | An unorganized list of all byda elements on the page.                                                        |
+| map      | object   |                     | Compare a simple data structure against the Flash and commit the changes.                                    |
+| organize | function |                     | Organize all elements from this.list or an array specified as the first parameter.                           |
+| run      | function |                     | Commit the changes of each store after they have been generated.                                             |
+| set      | function | name, value         | Set the value of a store. If you do not pass a value, the store will be set to a cached value if one exists. |
+| stores   | object   |                     | Contains organizations of byda elements (stores) that exist on the page when the flash was generated.        |
+| update   | function |                     | Refresh the flash with a new list and organize the list into stores.                                         |
 
 ####Collection API
-| Collection# 	| parameters 			| typeof        | Description 								|
-| -------------	| :-------------------:	|:-------------:| :---------------------------------------- |
-| get    		|  						| function     	| Return the value of the collection. 		|
-| set   		| value			 		| function 		| Set the value of the collection. 			|
+
+| Store | typeof   | Parameters | Description                         |
+|-------|----------|------------|-------------------------------------|
+| get   | function |            | Return the value of the collection. |
+| set   | function | value      | Set the value of the collection.    |
