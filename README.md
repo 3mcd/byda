@@ -18,7 +18,18 @@ Byda will create an object (flash) that contains organizations of elements on
 the page arranged by data-attribute (stores) that can then be compared against
 other flashes to generate lists of changes to perform. Byda's core functions
 will be exposed as a basic content-swapping/templating library, but the APIs of
-`Flash` and `Store` are also exposed to provide more options to authors.
+`Flash` and `Store` are also exposed to provide more flexibility to authors.
+
+######Notes
+
+* A flash is just a wrapper for the stores at the moment the flash is generated.
+
+* A flash exposes methods that let you do bulk actions on the stores it contains.
+
+* Stores have a value and a list. This value is set across elements within the
+store. Calling `store.set(value)` will set the innerHTML (or value for inputs)
+of all of the elements in the list to the specified string.
+
 
 ##Basic Example
 
@@ -175,7 +186,7 @@ byda.init({
 | localCache | object   | Synchronize byda stores with a local cache such as localStorage to make your data persist.                                               |
 
 ######Notes
-*Byda will fallback to XHR if the clients browser does not support HTML5 imports.
+* Byda will fallback to XHR if the clients browser does not support HTML5 imports.
 
 ###byda.flash(options)
 Returns a `Flash` object:
