@@ -289,7 +289,7 @@
 			value = value[this.name];
 		}
 
-		if (!value) value = _getCached(this.name);
+		if ('undefined' == typeof value) value = _getCached(this.name);
 
 		for (_i = 0, _len = this.list.length; _i < _len; _i++) {
 			if (this.list[_i].hasAttribute('value')) { this.list[_i].value = value;}
