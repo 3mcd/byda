@@ -244,7 +244,7 @@ Returns an array of all byda elements on the page.
 | stores   | object   |                     | Contains organizations of byda elements (stores) that exist on the page when the flash was generated.        |
 | update   | function |                     | Refresh the flash with a new list and organize the list into stores.                                         |
 
-####Collection API
+####Store API
 
 | Store | typeof   | Parameters | Description                         |
 |-------|----------|------------|-------------------------------------|
