@@ -42,6 +42,7 @@
 
 	function _setCached(name, value) {
 		if (_localCache) _localCache['byda-' + name] = value;
+
 		if (_cache) {
 			if (!_cache.byda) _cache.byda = {};
 			_cache.byda[name] = value;
@@ -248,12 +249,10 @@
 	Change.prototype.swap = function() {
 		if (!this.from || !this.to) return;
 
-		var value = this.from.hasAttribute('value') ? this.to.value : this.to.innerHTML;
-
+		var value = this.to.nodeType ? this.to.value || this.to.innerHTML : this.to;
 		if (!value) value = _getCached(this.store) || '';
-
-		this.from.innerHTML = this.to.nodeType ? value : this.to;
-		this.from.value = this.to.nodeType ? value : this.to;
+		if (this.from.hasAttribute('value')) this.from.value = value;
+		else this.from.innerHTML = value;
 
 		return this;
 	};
