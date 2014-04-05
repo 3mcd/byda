@@ -370,9 +370,7 @@
 	};
 
 	Flash.prototype.update = function() {
-		this.list = this.dom ? byda.get(this.dom) : byda.get();
-		this.organize();
-		return this;
+		return this.organize(this.dom ? _get(this.dom) : _get());
 	};
 
 	// Add an element to the flash's list or a specified collection in the flash.
@@ -428,6 +426,7 @@
 
 		// If list of elements parameter wasn't provided, use the intrinsic list.
 		if (!list) list = this.list;
+		else this.list = list;
 
 		for (_i = 0, _len = list.length; _i < _len; _i++) {
 			name = list[_i].getAttribute('data-' + _suffix);
