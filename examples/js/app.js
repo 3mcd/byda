@@ -87,11 +87,11 @@ page('/page/:id', function(ctx) {
         ctx: ctx,
         view: 'list.byda'
     }, function(flash) {
+        flash.set('heading', 'Page ' + ctx.params.id);
         $('.Card').append('<textarea id="notepad" data-load="' + notes + '"></textarea>');
-        newFlash = byda.flash();
-        newFlash.set(notes);
+        flash.update();
         $('#notepad').on('input propertychange', function() {
-            newFlash.set(notes, $(this).val(), { cache: true });
+            flash.set(notes, $(this).val(), { cache: true });
         });
     });
 });
