@@ -21,13 +21,17 @@ Util.list = function(data, wrapper, container, fn) {
  * Initialize
  */
 
-var simCache = {};
+var SimCache = function() {};
 
-$(window).on('byda', function(e) {
+SimCache.prototype.clear = function() {
+    for (var key in this) {
+        delete this[key];
+    }
+};
 
-});
+var simCache = new SimCache();
 
-load.init({
+byda.init({
     base: '/examples',
     imports: false, // Set this to true to enable HTML imports
     freeze: true,
@@ -46,21 +50,32 @@ load.init({
  * Routes
  */
 
+$(window).on('byda', function(e) {
+    console.log(e.detail.name + ' => ' + e.detail.value);
+});
+
+page('/omg', function(ctx) {
+    byda({
+        view: 'chemical.byda',
+        ctx: ctx
+    }, function(flash) {
+        flash.set('group');
+        flash.set('name');
+    });
+});
+
 page('/', function(ctx) {
-    load({
+    byda({
         view:'home.byda',
         ctx: ctx
     }, function(flash) {
-        flash.set('username');
         flash.set('counter');
-
         $('#counterBtn').on('click', function() {
             flash.set('counter', function(value) {
-                console.log(value);
                 if (!value) value = 0;
                 value++;
                 return value;
-            });
+            }, { cache: true });
         });
     });
 });
@@ -68,7 +83,7 @@ page('/', function(ctx) {
 page('/page/:id', function(ctx) {
     var id = ctx.params.id;
     var notes = 'notes' + id;
-    load({
+    byda({
         ctx: ctx,
         view: 'list.byda'
     }, function(flash) {
@@ -76,20 +91,19 @@ page('/page/:id', function(ctx) {
         newFlash = byda.flash();
         newFlash.set(notes);
         $('#notepad').on('input propertychange', function() {
-            newFlash.set(notes, $(this).val());
+            newFlash.set(notes, $(this).val(), { cache: true });
         });
     });
 });
 
 page('/settings', function(ctx) {
-    load({
+    byda({
         ctx: ctx,
         view: 'settings.byda'
     }, function(flash) {
         flash.set('username');
-
         $('#name').bind('input propertychange', function() {
-            flash.set('username', $(this).val());
+            flash.set('username', $(this).val(), { cache: true });
         });
     });
 });
@@ -97,7 +111,7 @@ page('/settings', function(ctx) {
 page('/periodic-table/:row/:num', function(ctx) {
     var row = ctx.params.row;
     var num = ctx.params.num;
-    load({
+    byda({
         ctx: ctx,
         view: 'chemical.byda',
         json: { 'periodic': 'includes/periodic-table.json' }
@@ -110,14 +124,14 @@ page('/periodic-table/:row/:num', function(ctx) {
         newFlash = byda.flash();
         newFlash.set(notes);
         $('#notepad').on('input propertychange', function() {
-            newFlash.set(notes, $(this).val());
+            newFlash.set(notes, $(this).val(), { cache: true });
         });
 
     });
 });
 
 page('/periodic-table', function(ctx) {
-    load({
+    byda({
         ctx: ctx,
         view: 'list.byda',
         json: { 'periodic': 'includes/periodic-table.json' }
