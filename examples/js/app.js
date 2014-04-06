@@ -90,6 +90,7 @@ page('/page/:id', function(ctx) {
         flash.set('heading', 'Page ' + ctx.params.id);
         $('.Card').append('<textarea id="notepad" data-load="' + notes + '"></textarea>');
         flash.update();
+        flash.set(notes);
         $('#notepad').on('input propertychange', function() {
             flash.set(notes, $(this).val(), { cache: true });
         });
