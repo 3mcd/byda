@@ -54,24 +54,15 @@ $(window).on('byda', function(e) {
     console.log(e.detail.name + ' => ' + e.detail.value);
 });
 
-page('/omg', function(ctx) {
-    byda({
-        view: 'chemical.byda',
-        ctx: ctx
-    }, function(flash) {
-        flash.set('group');
-        flash.set('name');
-    });
-});
-
 page('/', function(ctx) {
     byda({
         view:'home.byda',
         ctx: ctx
     }, function(flash) {
-        flash.set('counter');
+        var store = flash.find('counter');
+        store.set();
         $('#counterBtn').on('click', function() {
-            flash.set('counter', function(value) {
+            store.set(function(value) {
                 if (!value) value = 0;
                 value++;
                 return value;
@@ -87,12 +78,13 @@ page('/page/:id', function(ctx) {
         ctx: ctx,
         view: 'list.byda'
     }, function(flash) {
-        flash.set('heading', 'Page ' + ctx.params.id);
+        flash.find('heading').set('Page ' + ctx.params.id);
         $('.Card').append('<textarea id="notepad" data-load="' + notes + '"></textarea>');
         flash.update();
-        flash.set(notes);
+        var store = flash.find(notes);
+        store.set();
         $('#notepad').on('input propertychange', function() {
-            flash.set(notes, $(this).val(), { cache: true });
+            store.set($(this).val(), { cache: true });
         });
     });
 });
@@ -102,9 +94,10 @@ page('/settings', function(ctx) {
         ctx: ctx,
         view: 'settings.byda'
     }, function(flash) {
-        flash.set('username');
+        var store = flash.find('username');
+        store.set();
         $('#name').bind('input propertychange', function() {
-            flash.set('username', $(this).val(), { cache: true });
+            store.set($(this).val(), { cache: true });
         });
     });
 });
@@ -122,10 +115,11 @@ page('/periodic-table/:row/:num', function(ctx) {
         flash.map(element, { commit: true });
 
         $('.Notes').append('<textarea id="notepad" data-load="' + notes + '"></textarea>');
-        newFlash = byda.flash();
-        newFlash.set(notes);
+        var newFlash = byda.flash();
+        var store = newFlash.find(notes);
+        store.set();
         $('#notepad').on('input propertychange', function() {
-            newFlash.set(notes, $(this).val(), { cache: true });
+            store.set($(this).val(), { cache: true });
         });
 
     });
@@ -137,8 +131,8 @@ page('/periodic-table', function(ctx) {
         view: 'list.byda',
         json: { 'periodic': 'includes/periodic-table.json' }
     }, function(flash, data) {
-        flash.set('heading', 'Periodic Table');
-        flash.set('description', 'A list of all elements on the periodic table, each with a small set of data.');
+        flash.find('heading').set('Periodic Table');
+        flash.find('description').set('A list of all elements on the periodic table, each with a small set of data.');
         $.each(data.periodic.table, function(row, value) {
             $('.Card').append('<div class="TableView TableView-divider">Row ' + row + '</div>');
             Util.list(value.elements, 'TableView', '.Card', function(key, element) {

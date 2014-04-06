@@ -384,17 +384,6 @@
 		return this.stores[name];
 	};
 
-	// Set the value of a store.
-	Flash.prototype.set = function(name, value, options) {
-		var store = this.find(name);
-
-		if (!store) return;
-
-		store.set(value, options);
-
-		return this;
-	};
-
 	// Map a simulated list of changes to the Flash with an object.
 	Flash.prototype.map = function(object, options) {
 		var store;

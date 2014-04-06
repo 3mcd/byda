@@ -201,20 +201,21 @@ Example (with caching):
 ```javascript
 page('/notepad/:id', function(ctx) {
 	// Set the notepad variable to the id prefixed with 'notepad-'. This is our notepad
-	// collection name.
+	// store name.
 	var notepad = 'notepad-' + ctx.params.id;
 	byda({view: 'notepad'}, function(flash) {
 		// Append the notepad to the page.
 		$('.Notes').append('<textarea id="notepad" data-load="' + notes + '"></textarea>');
 		// Create a new flash with the updated DOM. Could also call flash.update() and
 		// just use the flash that was passed back
-        newFlash = byda.flash();
+        var newFlash = byda.flash();
+        var store = newFlash.find(notes);
         // Set the notepad collection to the cached collection value.
-        newFlash.set(notes);
+        store.set();
         // When the input value changes, set the notFepad collection value to the textarea
         // value.
         $('#notepad').on('input propertychange', function() {
-            newFlash.set(notes, $(this).val());
+            store.set(notes, $(this).val());
         });
 	});
 
@@ -231,22 +232,21 @@ Returns an array of all byda elements on the page.
 
 ####Flash API
 
-| Property | typeof   | Parameters          | Description                                                                                                  |
-|----------|----------|---------------------|--------------------------------------------------------------------------------------------------------------|
-| add      | function | collection, element | Add an element to a store.                                                                                   |
-| find     | function | name                | Return a store by name.                                                                                      |
-| generate | function | flash               | Compare to another flash and push the changes to the stores.                                                 |
-| list     | array    |                     | An unorganized list of all byda elements on the page.                                                        |
-| map      | object   |                     | Compare a simple data structure against the Flash and commit the changes.                                    |
-| organize | function |                     | Organize all elements from this.list or an array specified as the first parameter.                           |
-| run      | function |                     | Commit the changes of each store after they have been generated.                                             |
-| set      | function | name, value         | Set the value of a store. If you do not pass a value, the store will be set to a cached value if one exists. |
-| stores   | object   |                     | Contains organizations of byda elements (stores) that exist on the page when the flash was generated.        |
-| update   | function |                     | Refresh the flash with a new list and organize the list into stores.                                         |
+| Property | typeof   | Parameters          | Description                                                                                           |
+|----------|----------|---------------------|-------------------------------------------------------------------------------------------------------|
+| add      | function | collection, element | Add an element to a store.                                                                            |
+| find     | function | name                | Return a store by name.                                                                               |
+| generate | function | flash               | Compare to another flash and push the changes to the stores.                                          |
+| list     | array    |                     | An unorganized list of all byda elements on the page.                                                 |
+| map      | object   |                     | Compare a simple data structure against the Flash and commit the changes.                             |
+| organize | function |                     | Organize all elements from this.list or an array specified as the first parameter.                    |
+| run      | function |                     | Commit the changes of each store after they have been generated.                                      |
+| stores   | object   |                     | Contains organizations of byda elements (stores) that exist on the page when the flash was generated. |
+| update   | function |                     | Refresh the flash with a new list and organize the list into stores.                                  |
 
 ####Store API
 
-| Store | typeof   | Parameters | Description                         |
-|-------|----------|------------|-------------------------------------|
-| get   | function |            | Return the value of the collection. |
-| set   | function | value      | Set the value of the collection.    |
+| Store | typeof   | Parameters     | Description                         |
+|-------|----------|----------------|-------------------------------------|
+| get   | function |                | Return the value of the collection. |
+| set   | function | value, options | Set the value of the collection.    |
