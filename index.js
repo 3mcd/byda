@@ -1,4 +1,4 @@
-/*! Byda.js v0.0.2 || Eric McDaniel */
+/*! Byda.js 1.0.0 || Eric McDaniel */
 ;(function(window, document) {
 
     var _base, // Default base path.
@@ -33,7 +33,7 @@
     function _getCached(name) {
         if (!_cache && !_localCache) return;
 
-        var result = _localCache['byda-' + name] || _cache[name];
+        var result = _cache ? _cache[name] : _localCache['byda-' + name];
 
         return result;
     }
@@ -269,7 +269,7 @@
 
         if (!value) {
             cache = true;
-            value = _getCached(this.name);
+            value = _getCached(this.name) || '';
         }
 
         for (_i = 0, _len = this.list.length; _i < _len; _i++) {

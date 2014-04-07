@@ -1,5 +1,5 @@
 #byda.js
-###v0.0.2
+###1.0.0
 
 byda is a small (~4kb minified) library that allows you to insert Ajax content
 into HTML documents in a data-attribute specific manner. It works great with
