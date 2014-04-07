@@ -73,7 +73,6 @@ of all of the elements in the list to the specified string.
 </div>
 
 <div data-load="content">
-	<h3>Home</h3>
 	<p>Paragraph content.</p>
 </div>
 ```
