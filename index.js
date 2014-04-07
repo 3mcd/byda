@@ -1,4 +1,4 @@
-/*! Byda.js 1.0.0 || Eric McDaniel */
+/*! Byda.js 1.0.1 || Eric McDaniel */
 ;(function(window, document) {
 
     var _base, // Default base path.
@@ -356,7 +356,7 @@
     Flash.prototype.generate = function(flash) {
         var store;
         for (var name in this.stores) {
-            store = flash.stores[name] || _frozen.stores[name];
+            store = _frozen ? _frozen.stores[name] : flash.stores[name];
             if (store) this.stores[name].compare(store);
         }
         return this;
