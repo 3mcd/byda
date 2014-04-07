@@ -35,7 +35,7 @@
 
         var result = _localCache['byda-' + name] || _cache[name];
 
-        return result || '';
+        return result;
     }
 
     function _setCached(name, value) {
@@ -190,12 +190,12 @@
     // Perform callback functions
     function _complete(options) {
         var flash = byda.flash();
-        // If a global complete callback was specified, call it with the options
-        if ('function' == typeof _globalComplete) _globalComplete(flash, options);
 
         // If a local complete callback was specified, call it with a flash of the updated elements
         // and any JSON results
-        return options.callback && options.callback(flash, options.json ? options.json.res : null);
+        // If a global complete callback was specified, call it with the options
+        return _globalComplete && _globalComplete(flash, options) ||
+        options.callback && options.callback(flash, options.json ? options.json.res : null);
     }
 
     /**
@@ -216,7 +216,7 @@
 
         var value = this.to.nodeType ? this.to.value || this.to.innerHTML : this.to;
 
-        if (!value) value = _getCached(this.store);
+        if (!value) value = _getCached(this.store) || '';
 
         if (this.from.hasAttribute('value'))
             this.from.value = value;
