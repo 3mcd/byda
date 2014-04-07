@@ -322,15 +322,9 @@
         // references to elements on the page.
         this.frozen = options.frozen;
 
-        // If the Flash is not simulated, initialize it.
-        this.init();
-    }
-
-    // Initialize the Flash.
-    Flash.prototype.init = function() {
-        // Organize the flash when it is constructed.
+        // Organize the list into stores.
         this.organize();
-    };
+    }
 
     Flash.prototype.update = function() {
         return this.organize(this.dom ? _get(this.dom) : _get());
