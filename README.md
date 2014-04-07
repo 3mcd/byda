@@ -132,7 +132,7 @@ page('/', function(ctx) {
 
 page('/calendar/:day', function(ctx) {
 	var day = ctx.params.day;
-	byda(/* options */, function(collections, data) {
+	byda(/* options */, function(flash, data) {
 		console.log(data.activities[day]);
 	});
 });
@@ -210,9 +210,9 @@ page('/notepad/:id', function(ctx) {
 		// just use the flash that was passed back
         var newFlash = byda.flash();
         var store = newFlash.find(notes);
-        // Set the notepad collection to the cached collection value.
+        // Set the notepad store to the cached store value.
         store.set();
-        // When the input value changes, set the notFepad collection value to the textarea
+        // When the input value changes, set the notepad store value to the textarea
         // value.
         $('#notepad').on('input propertychange', function() {
             store.set(notes, $(this).val());
@@ -234,7 +234,7 @@ Returns an array of all byda elements on the page.
 
 | Property | typeof   | Parameters          | Description                                                                                           |
 |----------|----------|---------------------|-------------------------------------------------------------------------------------------------------|
-| add      | function | collection, element | Add an element to a store.                                                                            |
+| add      | function | store, element | Add an element to a store.                                                                            |
 | find     | function | name                | Return a store by name.                                                                               |
 | generate | function | flash               | Compare to another flash and push the changes to the stores.                                          |
 | list     | array    |                     | An unorganized list of all byda elements on the page.                                                 |
@@ -248,5 +248,5 @@ Returns an array of all byda elements on the page.
 
 | Store | typeof   | Parameters     | Description                         |
 |-------|----------|----------------|-------------------------------------|
-| get   | function |                | Return the value of the collection. |
-| set   | function | value, options | Set the value of the collection.    |
+| get   | function |                | Return the value of the store. |
+| set   | function | value, options | Set the value of the store.    |
