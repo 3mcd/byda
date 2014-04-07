@@ -33,9 +33,9 @@
     function _getCached(name) {
         if (!_cache && !_localCache) return;
 
-        var result = _localCache['byda-' + name] || _cache[name] || '';
+        var result = _localCache['byda-' + name] || _cache[name];
 
-        return result;
+        return result || '';
     }
 
     function _setCached(name, value) {
