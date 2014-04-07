@@ -1,3 +1,5 @@
+var load = byda;
+
 /**
  * Utilities
  */
@@ -35,7 +37,7 @@ byda.init({
     base: '/examples',
     imports: false, // Set this to true to enable HTML imports
     freeze: true,
-    localCache: localStorage,
+    local: localStorage,
     cache: simCache,
     complete: function(flash, options) {
         var path = options.ctx.path;
@@ -108,7 +110,9 @@ page('/periodic-table/:row/:num', function(ctx) {
     byda({
         ctx: ctx,
         view: 'chemical.byda',
-        json: { 'periodic': 'includes/periodic-table.json' }
+        json: [
+            { name: 'periodic', file: 'includes/periodic-table.json' },
+        ]
     }, function(flash, data) {
         var element = isNaN(row) ? data.periodic[row][num] : data.periodic.table[row].elements[num];
         var notes = element.name + '-notes';
@@ -129,7 +133,9 @@ page('/periodic-table', function(ctx) {
     byda({
         ctx: ctx,
         view: 'list.byda',
-        json: { 'periodic': 'includes/periodic-table.json' }
+        json: [
+            {name: 'periodic', file: 'includes/periodic-table.json'}
+        ]
     }, function(flash, data) {
         flash.find('heading').set('Periodic Table');
         flash.find('description').set('A list of all elements on the periodic table, each with a small set of data.');
