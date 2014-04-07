@@ -60,7 +60,9 @@ of all of the elements in the list to the specified string.
 
 ####views/home.html
 ```html
-<a data-load="navigation">
+<h3 data-load="title">Home</h3>
+
+<div data-load="navigation">
 	<ul class="Navigation">
 		<li>
 			<a href="/home" class="selected">Home</a>
@@ -68,12 +70,12 @@ of all of the elements in the list to the specified string.
 			<a href="/page/2">Page 2</a>
 		</li>
 	</ul>
-</a>
+</div>
 
-<a data-load="content">
+<div data-load="content">
 	<h3>Home</h3>
 	<p>Paragraph content.</p>
-</a>
+</div>
 ```
 
 When the index page or the '/home' path (if you're using routing, for example)
