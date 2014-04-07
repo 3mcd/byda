@@ -1,4 +1,4 @@
-/*! Byda.js v0.0.1 || Eric McDaniel */
+/*! Byda.js v0.0.2 || Eric McDaniel */
 ;(function(window, document) {
 
     var _base, // Default base path.
