@@ -1,0 +1,28 @@
+{
+  "name": "byda",
+  "main": "index.js",
+  "version": "0.0.1",
+  "homepage": "https://github.com/ericmcdaniel/byda",
+  "authors": [
+    "ericgmcdaniel <eric.g.mcdaniel@gmail.com>"
+  ],
+  "description": "Load Ajax content by HTML data-attributes",
+  "keywords": [
+    "html",
+    "ajax",
+    "data-attributes",
+    "single-page",
+    "app",
+    "templating",
+    "javascript",
+    "js"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
