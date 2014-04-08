@@ -174,7 +174,7 @@ You can of course initialize byda with options:
 ```javascript
 byda.init({
 	base: '/examples',
-	data: 'foo', // will now look for elements with the attribute called 'data-foo'
+	data: 'foo', // will now look for elements with the attribute 'data-foo'
 	freeze: true,
 	localCache: localStorage
 });
@@ -219,7 +219,7 @@ page('/notepad/:id', function(ctx) {
         // When the input value changes, set the notepad store value to the textarea
         // value.
         $('#notepad').on('input propertychange', function() {
-            store.set(notes, $(this).val());
+            store.set($(this).val());
         });
 	});
 
