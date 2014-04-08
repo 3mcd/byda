@@ -29,8 +29,12 @@
     "url": "https://github.com/ericmcdaniel/byda/issues"
   },
   "homepage": "https://github.com/ericmcdaniel/byda",
+  "dependencies": {
+    "grunt": "~0.4.4",
+    "grunt-contrib-jshint": "~0.10.0"
+  },
   "devDependencies": {
-    "grunt": "^0.4.4",
-    "grunt-contrib-jshint": "^0.10.0"
+    "grunt": "~0.4.4",
+    "grunt-contrib-jshint": "~0.10.0"
   }
 }
