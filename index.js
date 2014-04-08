@@ -1,5 +1,6 @@
 /*! Byda.js 1.0.2 || Eric McDaniel */
 ;(function(window, document) {
+    'use strict';
 
     var _base, // Default base path.
         _localCache, // Experimental
