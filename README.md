@@ -1,5 +1,5 @@
 #byda.js
-###1.0.0
+###1.0.2
 
 byda is a small (~4kb minified) library that allows you to insert Ajax content
 into HTML documents in a data-attribute specific manner. It works great with
@@ -182,7 +182,6 @@ byda.init({
 | cache      | object   | Synchronize byda stores with an object.                                                                                                  |
 | complete   | function | A global complete function that will call after byda is finished.                                                                        |
 | data       | string   | Specify a custom data attribute prefix to use. The default is data-load.                                                                 |
-| freeze     | boolean  | Store copies of the template byda elements in a variable to serve as a fallback if no corresponding element is found in a view or cache. |
 | imports    | boolean  | Use HTML5 imports instead of XHR                                                                                                         |
 | localCache | object   | Synchronize byda stores with a local cache such as localStorage to make your data persist.                                               |
 
