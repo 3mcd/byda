@@ -12,7 +12,7 @@
     var _supportsImports = 'import' in document.createElement('link');
 
     // An empty callback function.
-    var noop = function() {};
+    function noop() {}
 
     /**
      * Core Functions
