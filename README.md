@@ -31,6 +31,10 @@ store. Calling `store.set(value)` will set the innerHTML (or value for inputs)
 of all of the elements in the list to the specified string.
 
 
+### Examples
+
+Clone the repository, cd into the directory and run `python -m SimpleHTTPServer`.
+
 ##Basic Example
 
 ####index.html
