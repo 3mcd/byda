@@ -2,8 +2,7 @@
 ;(function(window, document) {
 
     var _base, // Default base path.
-        _frozen, // Stores a frozen flash.
-        _localCache = {}, // Experimental
+        _localCache, // Experimental
         _cache, // Experimental
         _globalComplete, // Stores a callback function called after Byda is complete.
         _imports, // Disable HTML5 imports by default.
@@ -31,15 +30,13 @@
     }
 
     function _getCached(name) {
-        if (!_cache && !_localCache) return;
-
-        var result = _cache ? _cache[name] : _localCache['byda-' + name];
+        var result = _localCache ? _localCache['byda-' + name] : _cache ? _cache[name] : '';
 
         return result;
     }
 
     function _setCached(name, value) {
-        _localCache['byda-' + name] = value;
+        if (_localCache) _localCache['byda-' + name] = value;
 
         if (_cache) _cache.byda[name] = value;
     }
@@ -267,10 +264,7 @@
         else if ('object' == typeof value)
             value = value[this.name];
 
-        if (!value) {
-            cache = true;
-            value = _getCached(this.name) || '';
-        }
+        if (!value) value = _getCached(this.name) || '';
 
         for (_i = 0, _len = this.list.length; _i < _len; _i++) {
             el = this.list[_i];
@@ -356,7 +350,7 @@
     Flash.prototype.generate = function(flash) {
         var store;
         for (var name in this.stores) {
-            store = _frozen ? _frozen.stores[name] : flash.stores[name];
+            store = flash.stores[name];
             if (store) this.stores[name].compare(store);
         }
         return this;
@@ -414,9 +408,6 @@
 
         // Set the global complete callback to the options.complete function.
         _globalComplete = options.complete;
-
-        // Make a flash and store it in the variable _frozen to use as default innerHTML values
-        if (options.freeze) _frozen = byda.flash({frozen: true});
     };
 
     // Set the base path to a specified string.
