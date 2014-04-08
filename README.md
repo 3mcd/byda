@@ -31,11 +31,11 @@ store. Calling `store.set(value)` will set the innerHTML (or value for inputs)
 of all of the elements in the list to the specified string.
 
 
-### Examples
+##Examples
 
 Clone the repository, cd into the directory and run `python -m SimpleHTTPServer`.
 
-##Basic Example
+###Basic Example
 
 ####index.html
 ```html
@@ -85,6 +85,25 @@ When the index page or the '/home' path (if you're using routing, for example)
 is accessed, byda will load in HTML wrapped in data-load tags from the file
 specified. The HTML in the index page's data-load tags will be replaced with
 the new content.
+
+###Manual Swapping
+
+Sometimes you may not event want to use Ajax, but parse a string as DOM and
+load it in to your template.
+
+```html
+<div data-load="example">I don't have long to live :(</div>
+```
+
+```javascript
+// Create a simulated flash with some HTML
+var simulated = byda.flash({
+	dom: "<div data-load='example'>I died!</div>"
+});
+
+// Create a new flash and overwrite the innerHTML of the template div with the innerHTML of simulated div.
+byda.flash().generate(simulated).run();
+```
 
 ##Callbacks
 
