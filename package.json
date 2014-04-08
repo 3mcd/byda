@@ -1,0 +1,36 @@
+{
+  "name": "byda",
+  "version": "1.0.2",
+  "description": "Load content by HTML data-attributes",
+  "main": "index.js",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ericmcdaniel/byda"
+  },
+  "keywords": [
+    "html",
+    "ajax",
+    "data-attributes",
+    "single-page",
+    "app",
+    "templating",
+    "javascript",
+    "js"
+  ],
+  "author": "Eric McDaniel",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ericmcdaniel/byda/issues"
+  },
+  "homepage": "https://github.com/ericmcdaniel/byda",
+  "devDependencies": {
+    "grunt": "^0.4.4",
+    "grunt-contrib-jshint": "^0.10.0"
+  }
+}
