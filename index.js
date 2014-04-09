@@ -224,7 +224,7 @@
         return this;
     };
 
-    // A Collection contains a list of Byda elements that can be manipulated with Flash#add, and a
+    // A Store contains a list of Byda elements that can be manipulated with Flash#add, and a
     // value that can be get and set with Flash#get and Flash#set.
     function Store(name, value) {
         this.name = name;
