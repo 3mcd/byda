@@ -31,6 +31,15 @@ describe("ajax", function() {
         expect(store.list[0].nodeType).toBeTruthy();
     });
 
+    it("Flash.prototype.generate should create a change", function() {
+        source = byda.flash();
+        source.generate(dummy);
+
+        store = source.find('content');
+
+        expect(typeof store.to).toBeDefined();
+    });
+
     it("Store.prototype.get should return an exact innerHTML string value or undefined", function() {
         var str = 'Initial content';
         var $content = document.querySelector('#content');
