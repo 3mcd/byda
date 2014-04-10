@@ -1,7 +1,7 @@
 #byda.js [![Build Status](https://travis-ci.org/ericmcdaniel/byda.svg?branch=master)](https://travis-ci.org/ericmcdaniel/byda)
 ###1.2.0
 
-byda is a small (currently ~3.6kb minified) library that allows you to insert
+byda is a small (currently ~3.5kb minified) library that allows you to insert
 Ajax content into HTML documents in a data-attribute specific manner. It works
 great with pushState but doesn't include any pushState functionality, routing
 or history functionality, nor is it a full-featured templating system. This
@@ -181,6 +181,12 @@ page();
 ```
 
 You can now navigate through your Ajax loads with the browser history.
+
+##Buffer
+
+Byda's core offers a built in buffer to help with things like store-specific
+animations. A buffer function passed in an object titled with name of the
+store will be passed back three parameters: `buffer`,`from`, and `next`.
 
 ##Public API
 
