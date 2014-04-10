@@ -200,30 +200,6 @@
      * Object Constructors
      */
 
-    // A Change contains an index element and a corresponding element from a loaded file
-    function Change(store, from, to) {
-        this.store = store;
-        this.from = from;
-        this.to = to;
-    }
-
-    // Swap the innerHTML value of the index element to the innerHTML value of the loaded element
-    // or the value of a simulated element if this.to is not a node.
-    Change.prototype.swap = function() {
-        if (!this.from || !this.to) return;
-
-        var value = this.to.nodeType ? this.to.value || this.to.innerHTML : this.to;
-
-        if (!value) value = _getCached(this.store) || '';
-
-        if (this.from.hasAttribute('value'))
-            this.from.value = value;
-        else
-            this.from.innerHTML = value;
-
-        return this;
-    };
-
     // A Store contains a list of Byda elements that can be manipulated with Flash#add, and a
     // value that can be get and set with Flash#get and Flash#set.
     function Store(name, value) {
@@ -281,6 +257,8 @@
         if (cache) _setCached(this.name, this.value);
 
         this.emit();
+
+        return this;
     };
 
     Store.prototype.get = function() {
@@ -288,15 +266,26 @@
     };
 
     Store.prototype.compare = function(store) {
-        var _i, _len, change;
-        for (_i = 0, _len = this.list.length; _i < _len; _i++) {
-            this.changes.push(new Change(this.name, this.list[_i], store.list[_i]));
-        }
+        this.to = store.list[0].innerHTML;
     };
 
     Store.prototype.commit = function() {
-        var _i, _len;
-        for (_i = 0, _len = this.changes.length; _i < _len; _i++) this.changes[_i].swap();
+        if (!this.to) return;
+
+        var _i, _len,
+            value = this.to.nodeType ? this.to.value || this.to.innerHTML : this.to,
+            list = this.list;
+
+        if (!value) value = _getCached(this.name) || '';
+
+        for (_i = 0, _len = list.length; _i < _len; _i++) {
+            if (list[_i].hasAttribute('value'))
+                list[_i].value = value;
+            else
+                list[_i].innerHTML = value;
+        }
+
+        return this.set(value);
     };
 
     // A Flash contains a list of Byda elements that can be organized, compared against other

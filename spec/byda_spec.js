@@ -31,15 +31,13 @@ describe("ajax", function() {
         expect(store.list[0].nodeType).toBeTruthy();
     });
 
-    it("Flash.prototype.generate should create a list of Changes", function() {
+    it("Flash.prototype.generate should create a single change", function() {
         source = byda.flash();
         source.generate(dummy);
 
         store = source.find('content');
 
-        expect(Object.prototype.toString.call( store.changes )).toBe('[object Array]');
-        expect(store.changes.length).toBe(1);
-        expect(store.changes[0].constructor.name).toBe('Change');
+        expect(typeof store.to).toBe('string');
     });
 
     it("Store.prototype.get should return an exact innerHTML string value or undefined", function() {
@@ -49,12 +47,12 @@ describe("ajax", function() {
         expect($content.innerHTML).toEqual(str);
     });
 
-    // it("Flash.prototype.run should swap the content of elements within stores, as well as the store value", function() {
-    //     var $content = document.querySelector('#content');
+    it("Flash.prototype.run should swap the content of elements within stores, as well as the store value", function() {
+        var $content = document.querySelector('#content');
 
-    //     source.run();
+        source.run();
 
-    //     // expect(store.get()).toEqual(testStr);
-    //     expect($content.innerHTML).toEqual(testStr);
-    // });
+        expect(store.get()).toEqual(testStr);
+        expect($content.innerHTML).toEqual(testStr);
+    });
 });
