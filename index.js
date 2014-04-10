@@ -2,12 +2,13 @@
 ;(function(window, document) {
     'use strict';
 
-    var _base, // Default base path.
+    var _active,
+        _base, // Default base path.
         _buffer = {},
-        _localCache, // Experimental
-        _cache, // Experimental
+        _localCache,
+        _cache,
         _globalComplete, // Stores a callback function called after Byda is complete.
-        _imports, // Disable HTML5 imports by default.
+        _imports,
         _suffix = 'load'; // Default data-attribute suffix.
 
     // Check to see if the browser supports HTML5 imports.
@@ -45,7 +46,7 @@
 
     // Parse options and begin XHR
     function byda(options, callback) {
-        if (!options) return;
+        if (!options || _active) return;
 
         // If a string is passed as the options paramter, assume it is a path to a file
         if ('string' == typeof options) options = { file: options };
@@ -54,7 +55,7 @@
         if (options.view) options.file =  'views/' + options.view + '.html';
 
         // If a callback is passed as the second parameter, add or overwrite options.callback.
-        options.callback = callback;
+        options.callback = callback || noop;
 
         // If options.json exists, create an object with the request (string or array), and an empty
         // results object.
@@ -175,26 +176,20 @@
 
     // XHR succeeded and we can begin swapping content
     function _success(response, options) {
+
         byda.flash()
             .generate(byda.flash({ dom: response }))
-            .run();
-        // Complete Byda with the options.
-        _complete(options);
+            .run(function() {
+                _active = true;
+                options.callback(byda.flash(), options.json.res);
+            }, function() {
+                _active = false;
+                _globalComplete(options);
+            });
     }
 
     function _failure(options) {
         throw new Error('Could not get: ' + options.file);
-    }
-
-    // Perform callback functions
-    function _complete(options) {
-        var flash = byda.flash();
-
-        // If a local complete callback was specified, call it with a flash of the updated elements
-        // and any JSON results
-        // If a global complete callback was specified, call it with the options
-        return _globalComplete && _globalComplete(flash, options) ||
-        options.callback && options.callback(flash, options.json ? options.json.res : null);
     }
 
     /**
@@ -270,23 +265,33 @@
         this.to = store.list[0];
     };
 
-    Store.prototype.commit = function() {
-        if (!this.to) return;
+    Store.prototype.commit = function(done) {
+        var that = this;
+
+        function complete() {
+            done(that.name);
+        }
+
+        if (!this.to) return complete();
 
         var _i, _len, buff,
             value = this.to.nodeType ? this.to.value || this.to.innerHTML : this.to,
-            list = this.list;
+            list = this.list,
+            name = this.name;
 
         if (!value) value = _getCached(this.name) || '';
 
+
+
         if ('function' == typeof _buffer[this.name]) {
-            for (_i = 0, _len = this.list.length; _i < _len; _i++) {
-                buff = this.list[_i].cloneNode(true);
+            for (_i = list.length - 1; _i >= 0; _i--) {
+                buff = list[_i].cloneNode(true);
                 buff.innerHTML = value;
-                _buffer[this.name](buff, this.list[_i]);
+                _buffer[name](buff, list[_i], complete);
             }
         } else {
             this.set(value);
+            complete();
         }
     };
 
@@ -297,6 +302,8 @@
         if (!options) options = {};
 
         this.dom = options.dom;
+
+        this.numStores = 0;
 
         // Collect a flat list of the Byda elements by calling byda.get() with either an imported
         // DOM if one was passed or no DOM. In the case of no DOM, the byda.get() will use the
@@ -353,20 +360,33 @@
         if (list) this.list = list;
 
         for (_i = 0, _len = this.list.length; _i < _len; _i++) {
-            name = this.list[_i].getAttribute('data-' + _suffix);
             node = this.list[_i];
+            name = node.getAttribute('data-' + _suffix);
             if (this.frozen) node = node.cloneNode(true);
             // Create a new store if one does not exist with the name.
-            if (!this.stores[name]) this.stores[name] = new Store(name, node.value || node.innerHTML);
+            if (!this.stores[name]) {
+                this.stores[name] = new Store(name, node.value || node.innerHTML);
+                this.numStores++;
+            }
             this.stores[name].list.push(node);
         }
 
         return this;
     };
 
-    // Call the swap method on each change in the flashes list of changes.
-    Flash.prototype.run = function() {
-        for (var store in this.stores) this.stores[store].commit();
+    // Call the commit method on each change in the flashes list of changes.
+    Flash.prototype.run = function(start, finish) {
+        var that = this,
+            finished = [];
+
+        function done(name) {
+            finished.push(name);
+            if (that.numStores == finished.length) finish();
+        }
+
+        for (var store in this.stores) this.stores[store].commit(done);
+
+        start();
     };
 
     /**
@@ -395,7 +415,7 @@
         _base = options.base;
 
         // Set the global complete callback to the options.complete function.
-        _globalComplete = options.complete;
+        _globalComplete = options.complete || noop;
     };
 
     // Set the base path to a specified string.

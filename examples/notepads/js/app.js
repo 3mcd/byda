@@ -33,11 +33,8 @@ var simCache = new SimCache();
 
 byda.init({
     base: '/examples/notepads',
-    imports: false, // Set this to true to enable HTML imports
-    freeze: true,
     local: localStorage,
-    cache: simCache,
-    complete: function(flash, options) {
+    complete: function(options) {
         var path = options.ctx.path;
         $('.Navigation > li > a').each(function() {
             if (this.getAttribute('href') == path) $(this).addClass('is-active');
@@ -45,11 +42,12 @@ byda.init({
         });
     },
     buffer: {
-        "content": function(buffer, from) {
+        "content": function(buffer, from, next) {
             $(from).css('position', 'absolute');
             $(from).one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
                 $(from).remove();
                 $(buffer).removeClass('animated slideInRight');
+                next();
             });
             $(from).after(buffer);
             $(from).addClass('animated slideOutLeft');
@@ -117,8 +115,10 @@ page('/examples/notepads/periodic-table/:row/:num', function(ctx) {
         $('.Notes').append('<textarea id="notepad" data-load="' + notes + '"></textarea>');
         var newFlash = byda.flash();
         var store = newFlash.find(notes);
+        console.log(store);
         store.set();
         $('#notepad').on('input propertychange', function() {
+            console.log(store.get());
             store.set($(this).val(), { cache: true });
         });
 
