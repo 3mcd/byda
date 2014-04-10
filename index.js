@@ -379,6 +379,9 @@
         var that = this,
             finished = [];
 
+        start = start || noop;
+        finish = finish || noop;
+
         function done(name) {
             finished.push(name);
             if (that.numStores == finished.length) finish();
