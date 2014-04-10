@@ -185,8 +185,38 @@ You can now navigate through your Ajax loads with the browser history.
 ##Buffer
 
 Byda's core offers a built in buffer to help with things like store-specific
-animations. A buffer function passed in an object titled with name of the
-store will be passed back three parameters: `buffer`,`from`, and `next`.
+animations. A buffer function (passed when initializing the library) in an object
+titled with name of the store will be passed back three parameters: `buffer`,
+`from`, and `next`, where `buffer` is a newly generated DOM element with the
+Ajax content preloaded, `from` is a reference to the old element, and `next` is
+a callback function that you _must_ run when your buffer is complete. Here is an
+example animation buffer function using animate.css:
+
+```javascript
+byda.init({
+    buffer: {
+        "content": function(buffer, from, next) {
+            $(from).css('position', 'absolute');
+            $(from).one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
+                $(from).remove();
+                $(buffer).removeClass('animated slideInRight');
+                next();
+            });
+            $(from).after(buffer);
+            $(from).addClass('animated slideOutLeft');
+            $(buffer).addClass('animated slideInRight');
+        }
+    }
+});
+```
+
+Be sure to call `next()` when you are done with your animation / DOM
+manipulation, as it lets the core know when to end.
+
+######Notes
+
+* The buffer will occur before  the global 'complete' callback and after the
+'local', callback passed in as the second parameter of `byda()`.
 
 ##Public API
 
@@ -223,6 +253,7 @@ byda.init({
 | Option     | typeof   | Description                                                                                                                              |
 |------------|----------|------------------------------------------------------------------------------------------------------------------------------------------|
 | base       | string   | Prepend a base path to all of the requests and imports you perform with byda.                                                            |
+| buffer     | object   | Map buffer functions (that recieve a cloned element to animate) to stores to perform before the global callback and after the local callback|
 | cache      | object   | Synchronize byda stores with an object.                                                                                                  |
 | complete   | function | A global complete function that will call after byda is finished.                                                                        |
 | data       | string   | Specify a custom data attribute prefix to use. The default is data-load.                                                                 |
@@ -275,13 +306,13 @@ Returns an array of all byda elements on the page.
 
 | Property | typeof   | Parameters          | Description                                                                                           |
 |----------|----------|---------------------|-------------------------------------------------------------------------------------------------------|
-| add      | function | store, element | Add an element to a store.                                                                            |
+| add      | function | store, element      | Add an element to a store.                                                                            |
 | find     | function | name                | Return a store by name.                                                                               |
 | generate | function | flash               | Compare to another flash and push the changes to the stores.                                          |
 | list     | array    |                     | An unorganized list of all byda elements on the page.                                                 |
 | map      | object   |                     | Compare a simple data structure against the Flash and commit the changes.                             |
 | organize | function |                     | Organize all elements from this.list or an array specified as the first parameter.                    |
-| run      | function |                     | Commit the changes of each store after they have been generated.                                      |
+| run      | function | before, after       | Commit the changes of each store after they have been generated with before and after callbacks.                                    |
 | stores   | object   |                     | Contains organizations of byda elements (stores) that exist on the page when the flash was generated. |
 | update   | function |                     | Refresh the flash with a new list and organize the list into stores.                                  |
 

@@ -46,12 +46,12 @@ byda.init({
             $(from).css('position', 'absolute');
             $(from).one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
                 $(from).remove();
-                $(buffer).removeClass('animated slideInRight');
+                $(buffer).removeClass('animated slideInLeft');
                 next();
             });
             $(from).after(buffer);
-            $(from).addClass('animated slideOutLeft');
-            $(buffer).addClass('animated slideInRight');
+            $(from).addClass('animated slideOutDown');
+            $(buffer).addClass('animated slideInLeft');
         }
     }
 });
