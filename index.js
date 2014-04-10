@@ -331,9 +331,9 @@
     // Map a simulated list of changes to the Flash with an object.
     Flash.prototype.map = function(object, options) {
         var store;
-        for (var sim in object) {
-            store = this.stores[sim];
-            if (store) store.set(object[sim]);
+        for (var key in object) {
+            store = this.stores[key];
+            if (store) store.set(object[key]);
         }
         return this;
     };
