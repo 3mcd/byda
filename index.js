@@ -3,6 +3,7 @@
     'use strict';
 
     var _base, // Default base path.
+        _buffer = {},
         _localCache, // Experimental
         _cache, // Experimental
         _globalComplete, // Stores a callback function called after Byda is complete.
@@ -266,26 +267,27 @@
     };
 
     Store.prototype.compare = function(store) {
-        this.to = store.list[0].innerHTML;
+        this.to = store.list[0];
     };
 
     Store.prototype.commit = function() {
         if (!this.to) return;
 
-        var _i, _len,
+        var _i, _len, buff,
             value = this.to.nodeType ? this.to.value || this.to.innerHTML : this.to,
             list = this.list;
 
         if (!value) value = _getCached(this.name) || '';
 
-        for (_i = 0, _len = list.length; _i < _len; _i++) {
-            if (list[_i].hasAttribute('value'))
-                list[_i].value = value;
-            else
-                list[_i].innerHTML = value;
+        if ('function' == typeof _buffer[this.name]) {
+            for (_i = 0, _len = this.list.length; _i < _len; _i++) {
+                buff = this.list[_i].cloneNode(true);
+                buff.innerHTML = value;
+                _buffer[this.name](buff, this.list[_i]);
+            }
+        } else {
+            this.set(value);
         }
-
-        return this.set(value);
     };
 
     // A Flash contains a list of Byda elements that can be organized, compared against other
@@ -378,6 +380,8 @@
 
         // The options 'data' and 'suffix' are valid to specify a data attribute suffix.
         _suffix = 'string' == typeof options ? options : options.suffix = options.data || _suffix;
+
+        _buffer = options.buffer;
 
         // Cache Options (Experimental)
         _localCache = options.local;

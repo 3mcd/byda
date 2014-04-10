@@ -43,6 +43,18 @@ byda.init({
             if (this.getAttribute('href') == path) $(this).addClass('is-active');
             else $(this).removeClass('is-active');
         });
+    },
+    buffer: {
+        "content": function(buffer, from) {
+            $(from).css('position', 'absolute');
+            $(from).one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
+                $(from).remove();
+                $(buffer).removeClass('animated slideInRight');
+            });
+            $(from).after(buffer);
+            $(from).addClass('animated slideOutLeft');
+            $(buffer).addClass('animated slideInRight');
+        }
     }
 });
 
@@ -51,7 +63,7 @@ byda.init({
  */
 
 $(window).on('byda', function(e) {
-    console.log(e.detail.name + ' => ' + e.detail.value);
+    // console.log(e.detail.name + ' => ' + e.detail.value);
 });
 
 page('/examples/notepads', function(ctx) {
@@ -148,5 +160,3 @@ page('/examples/notepads/failure', function(ctx) {
 });
 
 page();
-
-page('/examples/notepads');
