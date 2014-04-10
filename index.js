@@ -1,4 +1,4 @@
-/*! Byda.js 1.0.3 || Eric McDaniel */
+/*! Byda.js 1.1.0 || Eric McDaniel */
 ;(function(window, document) {
     'use strict';
 
