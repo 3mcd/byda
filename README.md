@@ -1,12 +1,12 @@
 #byda.js [![Build Status](https://travis-ci.org/ericmcdaniel/byda.svg?branch=master)](https://travis-ci.org/ericmcdaniel/byda)
 ###1.1.0
 
-byda is a small (~4kb minified) library that allows you to insert Ajax content
-into HTML documents in a data-attribute specific manner. It works great with
-pushState but doesn't include any pushState functionality, routing or history
-functionality, nor is it a full-featured templating system. This means you can
-integrate it with your own desired routing, templating, or pushState
-implementation without being bound to any specific API.
+byda is a small (currently ~3.7kb minified) library that allows you to insert
+Ajax content into HTML documents in a data-attribute specific manner. It works
+great with pushState but doesn't include any pushState functionality, routing
+or history functionality, nor is it a full-featured templating system. This
+means you can integrate it with your own desired routing, templating, or
+pushState implementation without being bound to any specific API.
 
 The library supplies a very thin set of features for localStorage. You can also
 listen for changes by way of the 'byda' event that emits when your content
@@ -14,17 +14,28 @@ changes to sync data with outside databases or caches.
 
 ### Concept
 
-Byda will create an object (flash) that contains organizations of elements on
-the page arranged by data-attribute (stores) that can then be compared against
-other flashes to generate lists of changes to perform. Byda's core functions
-will be exposed as a basic content-swapping/templating library, but the APIs of
-`Flash` and `Store` are also exposed to provide more flexibility to authors.
+Byda will create an object (_Flash_) that contains organizations of elements on
+the page arranged by data-attribute (_Store_) that can then be compared against
+other flashes to generate changes to perform. Byda's core functions will be
+exposed as a basic content-swapping/templating library, but the APIs of _Flash_
+and _Store_ are also exposed to provide more flexibility to authors.
+
+### Use Cases
+
+* Single-page sites
+
+* Mobile websites / PhoneGap applications
+
+* Simple, interactive widgets (ex: sliders) who's content is loaded on-demand
+
+* A basic level of persistence to enhance UX in simple sites or mobile apps
 
 ######Notes
 
 * A flash is just a wrapper for the stores at the moment the flash is generated.
 
-* A flash exposes methods that let you do bulk actions on the stores it contains.
+* A flash exposes methods that let you do bulk actions on the stores it
+contains.
 
 * Stores have a value and a list. This value is set across elements within the
 store. Calling `store.set(value)` will set the innerHTML (or value for inputs)
@@ -33,7 +44,8 @@ of all of the elements in the list to the specified string.
 
 ##Examples
 
-Clone the repository, cd into the directory and run `python -m SimpleHTTPServer`.
+Clone the repository, cd into the directory and run
+`python -m SimpleHTTPServer`.
 
 ###Basic Example
 
@@ -45,18 +57,26 @@ Clone the repository, cd into the directory and run `python -m SimpleHTTPServer`
 </head>
 <body>
 	<div class="Header">
-		<h3 class="Header-title" data-load="title">Byda Example</h3>
+		<h3 class="Header-title" data-load="title">
+			<!-- 'Home' loaded here -->
+		</h3>
 		<div class="Header-nav" data-load="navigation">
-			<!-- Navigation loaded here -->
+			<ul class="Navigation">
+				<li>
+					<a href="/home" class="selected">Home</a>
+					<a href="/page/1">Page 1</a>
+					<a href="/page/2">Page 2</a>
+				</li>
+			</ul>
 		</div>
 	</div>
 	<div class="Main">
 		<div class="Main-content" data-load="content">
-			<!-- Content loaded here -->
+			<!-- 'Paragraph content.' loaded here -->
 		</div>
 	</div>
 	<script>
-		byda({view:'home'});
+		byda({ view: 'home' });
 	</script>
 </body>
 ...
@@ -65,16 +85,6 @@ Clone the repository, cd into the directory and run `python -m SimpleHTTPServer`
 ####views/home.html
 ```html
 <h3 data-load="title">Home</h3>
-
-<div data-load="navigation">
-	<ul class="Navigation">
-		<li>
-			<a href="/home" class="selected">Home</a>
-			<a href="/page/1">Page 1</a>
-			<a href="/page/2">Page 2</a>
-		</li>
-	</ul>
-</div>
 
 <div data-load="content">
 	<p>Paragraph content.</p>
@@ -88,8 +98,8 @@ the new content.
 
 ###Manual Swapping
 
-Sometimes you may not event want to use Ajax, but parse a string as DOM and
-load it in to your template.
+Sometimes you may not want to use Ajax, but parse a string as DOM and load it
+in to your template.
 
 ```html
 <div data-load="example">I don't have long to live :(</div>
@@ -101,9 +111,15 @@ var simulated = byda.flash({
 	dom: "<div data-load='example'>I died!</div>"
 });
 
-// Create a new flash and overwrite the innerHTML of the template div with the innerHTML of simulated div.
+// Create a new flash and overwrite the innerHTML of the template div with the
+innerHTML of simulated div.
 byda.flash().generate(simulated).run();
 ```
+
+######Notes
+
+* These functions (flash, generate, run) are listed and described in the API,
+documentation below.
 
 ##Callbacks
 
@@ -112,10 +128,10 @@ function will be executed with two parameters: `flash` and `data`.
 
 ###flash
 
-The first parameter of the callback will be passed a Flash object that contains
-important info about the newly loaded content. This object includes a 'stores'
-object that contains elements organized by their data-attribute value. Each
-organization is called a store.
+The first parameter of the callback will be passed a _Flash_ object that
+contains important info about the newly loaded content. This object includes a
+'stores' object that contains elements organized by their data-attribute value.
+Each organization is called a store.
 
 ```javascript
 byda('path/to/file.html', function(flash) {
@@ -164,14 +180,13 @@ page('/calendar/:day', function(ctx) {
 page();
 ```
 
-You can now navigate through your ajax loads with the browser history.
+You can now navigate through your Ajax loads with the browser history.
 
 ##Public API
 
 ###byda(options, callback)
 Load data into your document by data attributes through XHR or HTML5 imports
-(if the browser supports it and byda was initialized with the 'imports' option =
-true).
+(if the browser supports it and byda was initialized with 'imports' = true).
 
 | Option   | typeof   | Description                                                                      |
 |----------|----------|----------------------------------------------------------------------------------|
@@ -206,10 +221,11 @@ byda.init({
 | complete   | function | A global complete function that will call after byda is finished.                                                                        |
 | data       | string   | Specify a custom data attribute prefix to use. The default is data-load.                                                                 |
 | imports    | boolean  | Use HTML5 imports instead of XHR                                                                                                         |
-| localCache | object   | Synchronize byda stores with a local cache such as localStorage to make your data persist.                                               |
+| local 	 | object   | Synchronize byda stores with a local cache such as localStorage to make your data persist.                                               |
 
 ######Notes
-* Byda will fallback to XHR if the clients browser does not support HTML5 imports.
+* Byda will fallback to XHR if the clients browser does not support HTML5
+imports.
 
 ###byda.flash(options)
 Returns a `Flash` object:
@@ -229,14 +245,14 @@ page('/notepad/:id', function(ctx) {
 	byda({view: 'notepad'}, function(flash) {
 		// Append the notepad to the page.
 		$('.Notes').append('<textarea id="notepad" data-load="' + notes + '"></textarea>');
-		// Create a new flash with the updated DOM. Could also call flash.update() and
-		// just use the flash that was passed back
+		// Create a new flash with the updated DOM. Could also call
+		// flash.update() and just use the flash that was passed back.
         var newFlash = byda.flash();
         var store = newFlash.find(notes);
         // Set the notepad store to the cached store value.
         store.set();
-        // When the input value changes, set the notepad store value to the textarea
-        // value.
+        // When the input value changes, set the notepad store value to the
+        // textarea value.
         $('#notepad').on('input propertychange', function() {
             store.set($(this).val());
         });
@@ -244,10 +260,6 @@ page('/notepad/:id', function(ctx) {
 
 });
 ```
-
-###byda.freeze
-Reference copies of the index.html byda elements to serve as a fallback if no
-corresponding element is served in a view file.
 
 ###byda.get
 Returns an array of all byda elements on the page.

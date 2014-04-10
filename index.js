@@ -232,7 +232,7 @@
     };
 
     Store.prototype.set = function(value, options) {
-        var _i, _len, cache, el;
+        var _i, _len, cache, node;
 
         if (options) cache = options.cache;
 
@@ -244,12 +244,12 @@
         if (!value) value = _getCached(this.name) || '';
 
         for (_i = 0, _len = this.list.length; _i < _len; _i++) {
-            el = this.list[_i];
+            node = this.list[_i];
 
-            if (el.hasAttribute('value'))
-                el.value = value;
+            if (node.hasAttribute('value'))
+                node.value = value;
             else
-                el.innerHTML = value;
+                node.innerHTML = value;
         }
 
         this.value = value;
@@ -314,12 +314,6 @@
         return this.organize(this.dom ? _get(this.dom) : _get());
     };
 
-    // Add an element to the flash's list or a specified collection in the flash.
-    Flash.prototype.add = function(name, node) {
-        if ('string' == typeof name && node.nodeType) this.find(name).list.push(node);
-        return this;
-    };
-
     // Find and return a store.
     Flash.prototype.find = function(name) {
         return this.stores[name];
@@ -348,7 +342,7 @@
 
     // Organize a list of elements into groups by their Byda data-attribute value.
     Flash.prototype.organize = function(list) {
-        var _i, _len, el, name;
+        var _i, _len, node, name;
 
         // Reset the elements object.
         this.stores = {};
@@ -358,11 +352,11 @@
 
         for (_i = 0, _len = this.list.length; _i < _len; _i++) {
             name = this.list[_i].getAttribute('data-' + _suffix);
-            el = this.list[_i];
-            if (this.frozen) el = el.cloneNode(true);
+            node = this.list[_i];
+            if (this.frozen) node = node.cloneNode(true);
             // Create a new store if one does not exist with the name.
-            if (!this.stores[name]) this.stores[name] = new Store(name, el.value || el.innerHTML);
-            this.add(name, el);
+            if (!this.stores[name]) this.stores[name] = new Store(name, node.value || node.innerHTML);
+            this.stores[name].list.push(node);
         }
 
         return this;
