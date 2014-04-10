@@ -71,17 +71,15 @@ page('/examples/notepads', function(ctx) {
     });
 });
 
-page('/examples/notepads/page/:id', function(ctx) {
-    var id = ctx.params.id;
-    var notes = 'notes' + id;
+page('/examples/notepads/notepad', function(ctx) {
     byda({
         ctx: ctx,
         view: 'list.byda'
     }, function(flash) {
-        flash.find('heading').set('Page ' + ctx.params.id);
-        $('.Card').append('<textarea id="notepad" data-load="' + notes + '"></textarea>');
+        flash.find('heading').set('Notepad');
+        $('.Card').append('<textarea id="notepad" data-load="notepad"></textarea>');
         flash.update();
-        var store = flash.find(notes);
+        var store = flash.find('notepad');
         store.set();
         $('#notepad').on('input propertychange', function() {
             store.set($(this).val(), { cache: true });
