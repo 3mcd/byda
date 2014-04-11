@@ -73,8 +73,12 @@ Clone the repository, cd into the directory and run
 			<ul class="Navigation">
 				<li>
 					<a href="/home" class="selected">Home</a>
-					<a href="/page/1">Page 1</a>
-					<a href="/page/2">Page 2</a>
+				</li>
+                <li>
+                    <a href="/page/1">Page 1</a>
+				</li>
+                <li>
+                    <a href="/page/2">Page 2</a>
 				</li>
 			</ul>
 		</div>
