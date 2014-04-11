@@ -239,8 +239,8 @@
         var that = this;
 
         function complete() {
-            done( that.name );
             if (value) that.set( value );
+            done( that.name );
         }
         if ( !this.to ) return complete();
         var _i, buff,
