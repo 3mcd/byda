@@ -125,7 +125,7 @@ var simulated = byda.flash({
 });
 
 // Create a new flash and overwrite the innerHTML of the template div with the
-innerHTML of simulated div.
+// innerHTML of simulated div.
 byda.flash().generate(simulated).run();
 ```
 
