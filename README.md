@@ -1,5 +1,5 @@
 #byda.js [![Build Status](https://travis-ci.org/ericmcdaniel/byda.svg?branch=master)](https://travis-ci.org/ericmcdaniel/byda)
-###1.2.1
+###1.2.2
 
 byda is a small (currently ~3.8k minified) library that allows you to insert
 Ajax content into HTML documents in a data-attribute specific manner. It works

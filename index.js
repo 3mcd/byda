@@ -1,4 +1,4 @@
-/*! Byda.js 1.2.1 || Eric McDaniel */
+/*! Byda.js 1.2.2 || Eric McDaniel */
 ;( function( window, document ) {
 
     /**
