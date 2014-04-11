@@ -1,7 +1,7 @@
 #byda.js [![Build Status](https://travis-ci.org/ericmcdaniel/byda.svg?branch=master)](https://travis-ci.org/ericmcdaniel/byda)
 ###1.2.1
 
-byda is a small (currently ~3.5kb minified) library that allows you to insert
+byda is a small (currently ~3.8k minified) library that allows you to insert
 Ajax content into HTML documents in a data-attribute specific manner. It works
 great with pushState but doesn't include any pushState functionality, routing
 or history functionality, nor is it a full-featured templating system. This
@@ -19,6 +19,15 @@ the page arranged by data-attribute (_Store_) that can then be compared against
 other flashes to generate changes to perform. Byda's core functions will be
 exposed as a basic content-swapping/templating library, but the APIs of _Flash_
 and _Store_ are also exposed to provide more flexibility to authors.
+
+**Byda should **
+
+* work cross browser and cross platform,
+
+* be optimized for mobile platforms,
+
+* and stay > 5k in size.
+
 
 ### Use Cases
 
