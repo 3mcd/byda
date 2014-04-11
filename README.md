@@ -195,25 +195,25 @@ You can now navigate through your Ajax loads with the browser history.
 
 Byda's core offers an initialization option to help with things like
 store-specific animations. An animation function in an object titled with name
-of a store will be passed back three parameters: `buffer`, `from`, and `next`,
-where `buffer` is a newly generated DOM element with the Ajax content
-preloaded, `from` is a reference to the old element, and `next` is a callback
-function that you _must_ run when your animation is complete. Here is an
-example animation buffer function using animate.css:
+of a store will be passed back three parameters: `from`, `to`, and `next`,
+where `from` is a reference to the old element, `to` is a newly generated DOM
+element with the Ajax content preloaded, and `next` is a callback function
+that you _must_ run when your animation is complete. Here is an example
+animation function using jQuery and animate.css classes:
 
 ```javascript
 byda.init({
-    buffer: {
-        "content": function(buffer, from, next) {
+    animation: {
+        "content": function(from, to, next) {
             $(from).css('position', 'absolute');
             $(from).one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
                 $(from).remove();
-                $(buffer).removeClass('animated slideInRight');
+                $(to).removeClass('animated slideInRight');
                 next();
             });
-            $(from).after(buffer);
+            $(from).after(to);
             $(from).addClass('animated slideOutLeft');
-            $(buffer).addClass('animated slideInRight');
+            $(to).addClass('animated slideInRight');
         }
     }
 });
