@@ -20,7 +20,7 @@ other flashes to generate changes to perform. Byda's core functions will be
 exposed as a basic content-swapping/templating library, but the APIs of _Flash_
 and _Store_ are also exposed to provide more flexibility to authors.
 
-**Byda should **
+**Byda should**
 
 * work cross browser and cross platform,
 
