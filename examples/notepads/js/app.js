@@ -41,17 +41,17 @@ byda.init({
             else $(this).removeClass('is-active');
         });
     },
-    buffer: {
-        "content": function(buffer, from, next) {
+    animation: {
+        "content": function(from, to, next) {
             $(from).css('position', 'absolute');
             $(from).one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
                 $(from).remove();
-                $(buffer).removeClass('animated slideInLeft');
+                $(to).removeClass('animated slideInLeft');
                 next();
             });
-            $(from).after(buffer);
+            $(from).after(to);
             $(from).addClass('animated slideOutDown');
-            $(buffer).addClass('animated slideInLeft');
+            $(to).addClass('animated slideInLeft');
         }
     }
 });
