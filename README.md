@@ -182,14 +182,14 @@ page();
 
 You can now navigate through your Ajax loads with the browser history.
 
-##Buffer
+##Animations
 
-Byda's core offers a built in buffer to help with things like store-specific
-animations. A buffer function (passed when initializing the library) in an object
-titled with name of the store will be passed back three parameters: `buffer`,
-`from`, and `next`, where `buffer` is a newly generated DOM element with the
-Ajax content preloaded, `from` is a reference to the old element, and `next` is
-a callback function that you _must_ run when your buffer is complete. Here is an
+Byda's core offers an initialization option to help with things like
+store-specific animations. An animation function in an object titled with name
+of a store will be passed back three parameters: `buffer`, `from`, and `next`,
+where `buffer` is a newly generated DOM element with the Ajax content
+preloaded, `from` is a reference to the old element, and `next` is a callback
+function that you _must_ run when your animation is complete. Here is an
 example animation buffer function using animate.css:
 
 ```javascript
