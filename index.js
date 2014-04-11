@@ -240,6 +240,7 @@
 
         function complete() {
             done( that.name );
+            if (value) that.set( value );
         }
         if ( !this.to ) return complete();
         var _i, buff,
@@ -254,7 +255,6 @@
                 _animation[ name ]( list[ _i ], buff, complete );
             }
         } else {
-            this.set( value );
             complete();
         }
     };
