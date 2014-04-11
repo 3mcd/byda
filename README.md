@@ -304,7 +304,7 @@ page('/notepad/:id', function(ctx) {
         // When the input value changes, set the notepad store value to the
         // textarea value.
         $('#notepad').on('input propertychange', function() {
-            store.set($(this).val());
+            store.set($(this).val(), { cache: true });
         });
 	});
 
