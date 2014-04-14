@@ -17,6 +17,33 @@ Util.list = function(data, wrapper, container, fn) {
     }).appendTo(container);
 };
 
+function Animation( classFrom, classTo ) {
+    var _classFrom = 'animated ' + classFrom;
+    var _classTo = 'animated ' + classTo;
+
+    var _action = function( from, to, next ) {
+        $from = $(from);
+        $to = $(to);
+        $from.css('position', 'absolute');
+        $from.one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
+            $from.remove();
+            $to.removeClass(_classTo);
+            next();
+        });
+        $from.after($to);
+        $from.addClass(_classFrom);
+        $to.addClass(_classTo);
+    };
+
+    return _action;
+}
+
+
+animations = {};
+
+animations.fall = Animation('slideOutLeft', 'fadeIn');
+animations.fade = Animation('slideOutRight', 'fadeIn');
+
 /**
  * Initialize
  */
@@ -42,17 +69,7 @@ byda.init({
         });
     },
     animation: {
-        "content": function(from, to, next) {
-            $(from).css('position', 'absolute');
-            $(from).one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
-                $(from).remove();
-                $(to).removeClass('animated slideInLeft');
-                next();
-            });
-            $(from).after(to);
-            $(from).addClass('animated slideOutDown');
-            $(to).addClass('animated slideInLeft');
-        }
+        "content": Animation('slideOutDown', 'slideInLeft')
     }
 });
 
@@ -113,10 +130,8 @@ page('/examples/notepads/periodic-table/:row/:num', function(ctx) {
         $('.Notes').append('<textarea id="notepad" data-load="' + notes + '"></textarea>');
         var newFlash = byda.flash();
         var store = newFlash.find(notes);
-        console.log(store);
         store.set();
         $('#notepad').on('input propertychange', function() {
-            console.log(store.get());
             store.set($(this).val(), { cache: true });
         });
 
