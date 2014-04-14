@@ -320,6 +320,7 @@ Returns an array of all byda elements on the page.
 | Property | typeof   | Parameters          | Description                                                                                           |
 |----------|----------|---------------------|-------------------------------------------------------------------------------------------------------|
 | add      | function | store, element      | Add an element to a store.                                                                            |
+| count    | function |                     | Return the number of stores in `flash.stores`.                                                        |
 | find     | function | name                | Return a store by name.                                                                               |
 | generate | function | flash               | Compare to another flash and push the changes to the stores.                                          |
 | list     | array    |                     | An unorganized list of all byda elements on the page.                                                 |

@@ -1,10 +1,12 @@
 /*! Byda.js 1.2.2 || Eric McDaniel */
 ;( function( window, document ) {
 
+    'use strict';
+
     /**
      * Variables
      */
-    'use strict';
+
     var _active,
         _base, // Default base path.
         _animation = {},
@@ -265,7 +267,6 @@
         // If no options were passed, create a new empty options object.
         if ( !options ) options = {};
         this.dom = options.dom;
-        this.numStores = 0;
         // Collect a flat list of the Byda elements by calling byda.get() with either an imported
         // DOM if one was passed or no DOM. In the case of no DOM, the byda.get() will use the
         // document.
@@ -279,7 +280,13 @@
     }
 
     Flash.prototype.update = function() {
-        return this.organize( this.dom ? getBydaElements( this.dom ) : getBydaElements() );
+        return this.organize( getBydaElements( this.dom || null) );
+    };
+
+    Flash.prototype.count = function() {
+        var _i = 0;
+        for (var store in this.stores) _i++;
+        return _i;
     };
 
     // Find and return a store.
@@ -322,7 +329,6 @@
             // Create a new store if one does not exist with the name.
             if ( !this.stores[ name ] ) {
                 this.stores[ name ] = new Store( name, node.value || node.innerHTML );
-                this.numStores++;
             }
             this.stores[ name ].list.push( node );
         }
@@ -338,7 +344,7 @@
 
         function done( name ) {
             finished.push( name );
-            if ( that.numStores == finished.length ) finish();
+            if ( that.count() == finished.length ) finish();
         }
         for ( var store in this.stores ) this.stores[ store ].commit( done );
         start();
