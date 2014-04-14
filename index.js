@@ -214,7 +214,6 @@
 
     Store.prototype.set = function( value, options ) {
         var _i, cache, node;
-        if ( options ) cache = options.cache;
         if ( 'function' == typeof value ) value = value( this.value );
         else if ( 'object' == typeof value ) value = value[ this.name ];
         if ( !value ) value = getCached( this.name ) || '';
@@ -224,7 +223,7 @@
             else node.innerHTML = value;
         }
         this.value = value;
-        if ( cache ) setCached( this.name, this.value );
+        if ( options && options.cache ) setCached( this.name, this.value );
         this.emit();
         return this;
     };
