@@ -26,7 +26,7 @@ and _Store_ are also exposed to provide more flexibility to authors.
 
 * be optimized for mobile platforms,
 
-* and stay > 5k in size.
+* and stay < 5k in size.
 
 
 ### Use Cases
