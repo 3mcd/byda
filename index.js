@@ -38,8 +38,8 @@
     }
 
     function getCached( name ) {
-        var result = _localCache ? _localCache[ 'byda-' + name ] : _cache ? _cache[ name ] : '';
-        return result;
+        return _localCache ? _localCache[ 'byda-' + name ] :
+               _cache ? _cache[ name ] : '';
     }
 
     function setCached( name, value ) {
@@ -235,6 +235,7 @@
 
     Store.prototype.compare = function( store ) {
         this.to = store.list[ 0 ];
+        return this;
     };
 
     Store.prototype.commit = function( done ) {
@@ -339,15 +340,13 @@
     Flash.prototype.run = function( start, finish ) {
         var that = this,
             finished = [];
-        start = start || noop;
-        finish = finish || noop;
 
         function done( name ) {
             finished.push( name );
-            if ( that.count() == finished.length ) finish();
+            if ( that.count() == finished.length ) return finish && finish();
         }
         for ( var store in this.stores ) this.stores[ store ].commit( done );
-        start();
+        return start && start();
     };
 
     /**
