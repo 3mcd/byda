@@ -6,6 +6,7 @@ module.exports = function(grunt) {
             byda: {
                 src: 'index.js',
                 options: {
+                    keepRunner: true,
                     template: 'spec/runner.tmpl',
                     specs: 'spec/**/*spec.js',
                     helpers: 'spec/helpers/*.js'

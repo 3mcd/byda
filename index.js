@@ -358,7 +358,7 @@
         if ( !options ) return;
         // The options 'data' and 'suffix' are valid to specify a data attribute suffix.
         _suffix = 'string' == typeof options ? options : options.suffix = options.data || _suffix;
-        _animation = options.animation;
+        if (options.animation) _animation = options.animation;
         // Cache Options (Experimental)
         _localCache = options.local;
         _cache = options.cache;
