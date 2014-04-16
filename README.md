@@ -260,7 +260,6 @@ You can of course initialize byda with options:
 byda.init({
 	base: '/examples',
 	data: 'foo', // will now look for elements with the attribute 'data-foo'
-	freeze: true,
 	localCache: localStorage
 });
 ```
@@ -268,11 +267,11 @@ byda.init({
 | Option     | typeof   | Description                                                                                                                              |
 |------------|----------|------------------------------------------------------------------------------------------------------------------------------------------|
 | base       | string   | Prepend a base path to all of the requests and imports you perform with byda.                                                            |
-| buffer     | object   | Map buffer functions (that recieve a cloned element to animate) to stores to perform before the global callback and after the local callback|
+| animation  | object   | Map animation functions (that recieve a cloned element to animate) to stores to perform before the global callback and after the local callback. |
 | cache      | object   | Synchronize byda stores with an object.                                                                                                  |
 | complete   | function | A global complete function that will call after byda is finished.                                                                        |
 | data       | string   | Specify a custom data attribute prefix to use. The default is 'load'.                                                                    |
-| imports    | boolean  | Use HTML5 imports instead of XHR                                                                                                         |
+| imports    | boolean  | Use HTML5 imports instead of XHR.                                                                                                         |
 | local 	 | object   | Synchronize byda stores with a local cache such as localStorage to make your data persist.                                               |
 
 ######Notes
@@ -284,10 +283,10 @@ Returns a `Flash` object:
 
 | Option | typeof  | Description                                                          |
 |--------|---------|----------------------------------------------------------------------|
-| dom    | string  | A string to be parsed as HTML when generating list of byda elements. |
+| dom    | object / string  | A string parsed as HTML or parent node to generate the flash from. |
 | frozen | boolean | Clone elements before before pushing them to the list.               |
 
-Example (with caching):
+__Example (with caching):__
 
 ```javascript
 page('/notepad/:id', function(ctx) {
@@ -312,6 +311,16 @@ page('/notepad/:id', function(ctx) {
 
 });
 ```
+
+__Example (scoped flash):__
+
+```javascript
+var scopedFlash = byda.flash({ dom: document.querySelector('#content') });
+```
+
+`scopedFlash`'s list and stores are generated from byda elements within the element with
+the id 'content'. This means any methods called on the flash will only affect the
+byda elements within 'content'.
 
 ###byda.get
 Returns an array of all byda elements on the page.
