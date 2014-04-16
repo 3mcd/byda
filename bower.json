@@ -6,7 +6,7 @@
   "authors": [
     "ericgmcdaniel <eric.g.mcdaniel@gmail.com>"
   ],
-  "description": "Load Ajax content by HTML data-attributes",
+  "description": "Load HTML content via HTML5 imports or XHR",
   "keywords": [
     "html",
     "ajax",

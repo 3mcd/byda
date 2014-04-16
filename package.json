@@ -1,7 +1,7 @@
 {
   "name": "byda",
   "version": "1.2.4",
-  "description": "Load content by HTML data-attributes",
+  "description": "Load HTML content via HTML5 imports or XHR",
   "main": "index.js",
   "directories": {
     "example": "examples"
