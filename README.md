@@ -269,7 +269,7 @@ byda.init({
 | buffer     | object   | Map buffer functions (that recieve a cloned element to animate) to stores to perform before the global callback and after the local callback|
 | cache      | object   | Synchronize byda stores with an object.                                                                                                  |
 | complete   | function | A global complete function that will call after byda is finished.                                                                        |
-| data       | string   | Specify a custom data attribute prefix to use. The default is data-load.                                                                 |
+| data       | string   | Specify a custom data attribute prefix to use. The default is 'load'.                                                                    |
 | imports    | boolean  | Use HTML5 imports instead of XHR                                                                                                         |
 | local 	 | object   | Synchronize byda stores with a local cache such as localStorage to make your data persist.                                               |
 
