@@ -2,7 +2,7 @@
 ###1.2.4
 
 byda is a small (currently ~3.9k minified) library that allows you to insert
-Ajax content into HTML documents in a data-attribute specific manner. It works
+HTML content into HTML documents in a data-attribute specific manner. It works
 great with pushState but doesn't include any pushState functionality, routing
 or history functionality, nor is it a full-featured templating system. This
 means you can integrate it with your own desired routing, templating, or
@@ -21,6 +21,8 @@ exposed as a basic content-swapping/templating library, but the APIs of _Flash_
 and _Store_ are also exposed to provide more flexibility to authors.
 
 **Byda should**
+
+* work via HTML5 imports or XHR,
 
 * work cross browser and cross platform,
 
