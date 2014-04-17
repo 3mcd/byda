@@ -496,11 +496,10 @@
             if ( that.count() == finished.length ) return finish && finish();
         }
 
+        if ( 'function' == typeof start ) start(); // Run the specified start function.
+
         // Begin each of the commit functions.
         for ( var store in this.stores ) this.stores[ store ].commit( done );
-
-        // Run the specified start function.
-        return start && start();
     };
 
     /**
