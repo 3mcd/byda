@@ -1,5 +1,5 @@
 #byda.js [![Build Status](https://travis-ci.org/ericmcdaniel/byda.svg?branch=master)](https://travis-ci.org/ericmcdaniel/byda)
-###1.3.4
+###1.3.0
 
 byda is a small (currently ~3.9k minified) library that allows you to insert
 HTML content into HTML documents in a data-attribute specific manner. It works
