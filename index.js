@@ -1,4 +1,4 @@
-/*! Byda.js 1.2.4 || Eric McDaniel */
+/*! Byda.js 1.3.4 || Eric McDaniel */
 ;( function( window, document ) {
 
     'use strict';
@@ -212,7 +212,7 @@
      * @param  {Object} options  Options
      */
     function _success( response, options ) {
-        byda.flash() // Create a new flash.
+        byda.flash( { dom: options.dom } ) // Create a new flash.
             .generate( byda.flash( { // Create a flash based on the response and generate changes.
                 dom: response
             } ) )
@@ -423,7 +423,7 @@
      */
     Flash.prototype.map = function( object, options ) {
         for ( var key in object ) {
-            if ( this.stores[ key ] ) store.set( object[ key ] );
+            if ( this.stores[ key ] ) this.stores[ key ].set( object[ key ] );
         }
 
         return this;
