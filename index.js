@@ -212,12 +212,12 @@
      * @param  {Object} options  Options
      */
     function _success( response, options ) {
+        running = true; // Set the running flag to true.
         byda.flash( { dom: options.dom } ) // Create a new flash.
             .generate( byda.flash( { // Create a flash based on the response and generate changes.
                 dom: response
             } ) )
             .run( function() { // Perform the changes with start and finish callbacks.
-                running = true; // Set the running flag to true.
                 options.callback( byda.flash(), options.json.res ); // Perform the local callback.
             }, function() {
                 running = false; // Set the running flag to false. Byda can now start again.
@@ -496,10 +496,10 @@
             if ( that.count() == finished.length ) return finish && finish();
         }
 
-        if ( 'function' == typeof start ) start(); // Run the specified start function.
-
         // Begin each of the commit functions.
         for ( var store in this.stores ) this.stores[ store ].commit( done );
+
+        if ( 'function' == typeof start ) start(); // Run the specified start function.
     };
 
     /**

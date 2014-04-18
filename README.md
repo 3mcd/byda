@@ -1,21 +1,19 @@
 #byda.js [![Build Status](https://travis-ci.org/ericmcdaniel/byda.svg?branch=master)](https://travis-ci.org/ericmcdaniel/byda)
 ###1.3.0
 
-byda is a small (currently ~3.9k minified) library that allows you to insert
-HTML content into HTML documents in a data-attribute specific manner. It works
-great with pushState but doesn't include any pushState functionality, routing
-or history functionality, nor is it a full-featured templating system. This
-means you can integrate it with your own desired routing, templating, or
-pushState implementation without being bound to any specific API.
+Byda is a JavaScript library that facilitates content swapping ( without
+page reload ) via
+[HTML5 imports](http://www.html5rocks.com/en/tutorials/webcomponents/imports/) or [XHR](http://en.wikipedia.org/wiki/XMLHttpRequest) ( Ajax ). Byda does not provide any
+[pushState](https://developer.mozilla.org/en-US/docs/Web/Guide/API/DOM/Manipulating_the_browser_history) functionality, nor is it a full-featured templating engine. The
+library provides a public API that allows it to be implemented in a variety
+of ways outside the core implementation.
 
-The library supplies a very thin set of features for localStorage. You can also
-listen for changes by way of the 'byda' event that emits when your content
-changes to sync data with outside databases or caches.
+Byda is currently < 4kb minified.
 
 ### Concept
 
-Byda will create an object (_Flash_) that contains organizations of elements on
-the page arranged by data-attribute (_Store_) that can then be compared against
+Byda will create an object ( _Flash_ ) that contains organizations of elements on
+the page arranged by data-attribute ( _Store_ ) that can then be compared against
 other flashes to generate changes to perform. Byda's core functions will be
 exposed as a basic content-swapping/templating library, but the APIs of _Flash_
 and _Store_ are also exposed to provide more flexibility to authors.
@@ -37,7 +35,7 @@ and _Store_ are also exposed to provide more flexibility to authors.
 
 * Mobile websites / PhoneGap applications
 
-* Simple, interactive widgets (ex: sliders) who's content is loaded on-demand
+* Simple, interactive widgets ( ex: sliders ) who's content is loaded on-demand
 
 * A basic level of persistence to enhance UX in simple sites or mobile apps
 
@@ -49,16 +47,24 @@ and _Store_ are also exposed to provide more flexibility to authors.
 contains.
 
 * Stores have a value and a list. This value is set across elements within the
-store. Calling `store.set(value)` will set the innerHTML (or value for inputs)
+store. Calling `store.set( value )` will set the innerHTML ( or value for inputs )
 of all of the elements in the list to the specified string.
 
 
 ##Examples
 
-Clone the repository, cd into the directory and run
-`python -m SimpleHTTPServer`.
+* `git clone https://github.com/ericmcdaniel/byda/`,
+
+* `cd byda`,
+
+* `python -m SimpleHTTPServer`,
+
+* point your browser to localhost:8000
+
 
 ###Basic Example
+
+Here is a very simple example of content loading with Byda.
 
 ####index.html
 ```html
@@ -91,7 +97,7 @@ Clone the repository, cd into the directory and run
 		</div>
 	</div>
 	<script>
-		byda({ view: 'home' });
+		byda( { view: 'home' } );
 	</script>
 </body>
 ...
@@ -106,15 +112,17 @@ Clone the repository, cd into the directory and run
 </div>
 ```
 
-When the index page or the '/home' path (if you're using routing, for example)
-is accessed, byda will load in HTML wrapped in data-load tags from the file
-specified. The HTML in the index page's data-load tags will be replaced with
-the new content.
+At its core, Byda is a simple content swapping function. The function byda()
+will retrieve the text contents of a file, parse it as HTML, and swap out
+the contents of any HTML elements with corresponding data-suffix values. By
+default, suffix is set to 'load'. These examples assume this value is
+unchanged.
 
 ###Manual Swapping
 
 Sometimes you may not want to use Ajax, but parse a string as DOM and load it
-in to your template.
+in to your template. Byda has a public API that you can use according to your
+needs.
 
 ```html
 <div data-load="example">I don't have long to live :(</div>
@@ -122,21 +130,34 @@ in to your template.
 
 ```javascript
 // Create a simulated flash with some HTML
-var simulated = byda.flash({
+var simulated = byda.flash( {
 	dom: "<div data-load='example'>I died!</div>"
-});
+} );
 
 // Create a new flash and overwrite the innerHTML of the template div with the
 // innerHTML of simulated div.
-byda.flash().generate(simulated).run();
+byda.flash().generate( simulated ).run();
 ```
 
 ######Notes
 
-* These functions (flash, generate, run) are listed and described in the API,
+* These functions ( flash, generate, run ) are listed and described in the API
 documentation below.
 
-##Callbacks
+##Core
+
+The Byda public API is accessed through the `byda` method. This method can be
+initialized with the options `file`, `view`, `json`, and `dom`, where
+
+* `file` is the path of a file to be parsed as HTML,
+
+* `view` is shorthand for `file: 'views/' + file + '.html'`,
+
+* `json` is an object formatted in key-value pairs ( where the key is an
+identifier and the value is a path to the json file ) or the path to the json
+file as a string,
+
+* and `dom` is a 'container' or 'parent' element to contain the function to.
 
 You can pass a callback to the `byda()` function as the second parameter. The
 function will be executed with two parameters: `flash` and `data`.
@@ -149,46 +170,46 @@ contains important info about the newly loaded content. This object includes a
 Each organization is called a store.
 
 ```javascript
-byda('path/to/file.html', function(flash) {
+byda( 'path/to/file.html' , function( flash ) {
 	// Access the title store (which contains one element)
-	console.log(flash.find('title').get()); // 'Byda Example'
-});
+	console.log( flash.find( 'title' ).get() ); // 'Byda Example'
+} );
 ```
 
 ###data
 
-`data` is an object that contains any JSON you want to load with your view.
+`data` is an object that contains any JSON you want to load alongside
+the byda() function.
 
 ```javascript
-function calendar(flash, data) {
+function calendar( flash, data ) {
 	var activities = data.activities;
 
-	$.each(days, function(index, value) {
-		$('#calendar').append(index + ': ' + activities[index]);
-	});
+	$.each( days, function( index, value ) {
+		$( '#calendar' ).append( index + ': ' + activities[index] );
+	} );
 }
 
-byda({
+byda( {
 	view: 'calendar',
-	json: {'activites' : 'includes/json/activities.json'},
-	callback: calendar
-});
+	json: { 'activites' : 'includes/json/activities.json' },
+}, calendar );
 ```
 
 ##pushState
 
-Combining byda with pushState is a good idea. Page.js is a micro-router that
+Combining byda with pushState is a useful idea. [Page.js](http://visionmedia.github.io/page.js/) is a micro-router that
 lets us utilize pushState routing for our app:
 
 ```javascript
-page('/', function(ctx) {
-	byda({view:'home'});
+page( '/', function( ctx ) {
+	byda( { view:'home' } );
 });
 
-page('/calendar/:day', function(ctx) {
+page( '/calendar/:day', function( ctx ) {
 	var day = ctx.params.day;
-	byda(/* options */, function(flash, data) {
-		console.log(data.activities[day]);
+	byda( /* options */, function( flash, data ) {
+		console.log( data.activities[ day ] );
 	});
 });
 
@@ -199,30 +220,33 @@ You can now navigate through your Ajax loads with the browser history.
 
 ##Animations
 
-Byda's core offers an initialization option to help with things like
-store-specific animations. An animation function in an object titled with name
-of a store will be passed back three parameters: `from`, `to`, and `next`,
-where `from` is a reference to the old element, `to` is a newly generated DOM
-element with the Ajax content preloaded, and `next` is a callback function
-that you _must_ run when your animation is complete. Here is an example
-animation function using jQuery and animate.css classes:
+Byda handles animations via the initialization option `animation`. The option
+should be passed an object with key-value pairs where the key is the name of
+the store to be animated and the value is a function. The function is passed a
+reference to the element animating out, a newly-cloned element to animate in
+and a callback function to run when the animation is complete.
+
+You can ( and should ) design animations to be reused throughout your application,
+although those measures were not taken for this example.
+
+Here is an example animation function using jQuery and animate.css:
 
 ```javascript
-byda.init({
+byda.init( {
     animation: {
-        "content": function(from, to, next) {
-            $(from).css('position', 'absolute');
-            $(from).one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
-                $(from).remove();
-                $(to).removeClass('animated slideInRight');
+        "content": function( from, to, next ) {
+            $( from ).css( 'position', 'absolute' );
+            $( from ).one( 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
+                $( from ).remove();
+                $( to ).removeClass( 'animated slideInRight' );
                 next();
             });
-            $(from).after(to);
-            $(from).addClass('animated slideOutLeft');
-            $(to).addClass('animated slideInRight');
+            $( from ).after( to );
+            $( from ).addClass('animated slideOutLeft' );
+            $( to ).addClass( 'animated slideInRight' );
         }
     }
-});
+ });
 ```
 
 Be sure to call `next()` when you are done with your animation / DOM
@@ -235,13 +259,13 @@ manipulation, as it lets the core know when to end.
 
 ##Public API
 
-###byda(options, callback)
+###byda( options, callback )
 Load data into your document by data attributes through XHR or HTML5 imports
 (if the browser supports it and byda was initialized with 'imports' = true).
 
 | Option   | typeof   | Description                                                                      |
 |----------|----------|----------------------------------------------------------------------------------|
-| complete | function | Function that is called after byda is complete. Passed back flash and JSON data. |
+| dom      | string / object   | A string to be parsed as HTML or node at which the byda function begins ( or is scoped ) |
 | file     | string   | Path to a file to use as the basis for swapping the content of byda elements.    |
 | json     | string   | The path to a .json file to load alongside the view.                             |
 | view     | string   | Shorthand for `{ file: 'views/' + path + '.html' }`                              |
@@ -250,18 +274,18 @@ Load data into your document by data attributes through XHR or HTML5 imports
 Set the base path for XHR and HTML5 imports.
 
 ```javascript
-byda.base('/path/to/base');
+byda.base( '/path/to/base' );
 ```
 
 ###byda.init
 You can of course initialize byda with options:
 
 ```javascript
-byda.init({
+byda.init( {
 	base: '/examples',
 	data: 'foo', // will now look for elements with the attribute 'data-foo'
 	localCache: localStorage
-});
+} );
 ```
 
 | Option     | typeof   | Description                                                                                                                              |
@@ -278,7 +302,7 @@ byda.init({
 * Byda will fallback to XHR if the clients browser does not support HTML5
 imports.
 
-###byda.flash(options)
+###byda.flash( options )
 Returns a `Flash` object:
 
 | Option | typeof  | Description                                                          |
@@ -289,33 +313,33 @@ Returns a `Flash` object:
 __Example (with caching):__
 
 ```javascript
-page('/notepad/:id', function(ctx) {
+page( '/notepad/:id', function( ctx ) {
 	// Set the notepad variable to the id prefixed with 'notepad-'. This is our notepad
 	// store name.
 	var notepad = 'notepad-' + ctx.params.id;
-	byda({view: 'notepad'}, function(flash) {
+	byda( { view: 'notepad' }, function( flash ) {
 		// Append the notepad to the page.
-		$('.Notes').append('<textarea id="notepad" data-load="' + notes + '"></textarea>');
+		$( '.Notes' ).append( '<textarea id="notepad" data-load="' + notes + '"></textarea>' );
 		// Create a new flash with the updated DOM. Could also call
 		// flash.update() and just use the flash that was passed back.
         var newFlash = byda.flash();
-        var store = newFlash.find(notes);
+        var store = newFlash.find( notes );
         // Set the notepad store to the cached store value.
         store.set();
         // When the input value changes, set the notepad store value to the
         // textarea value.
-        $('#notepad').on('input propertychange', function() {
-            store.set($(this).val(), { cache: true });
+        $( '#notepad' ).on( 'input propertychange', function() {
+            store.set( $( this ).val(), { cache: true } );
         });
 	});
 
 });
 ```
 
-__Example (scoped flash):__
+__Example ( scoped flash ):__
 
 ```javascript
-var scopedFlash = byda.flash({ dom: document.querySelector('#content') });
+var scopedFlash = byda.flash( { dom: document.querySelector( '#content' ) } );
 ```
 
 `scopedFlash`'s list and stores are generated from byda elements within the element with
@@ -337,7 +361,7 @@ Returns an array of all byda elements on the page.
 | list     | array    |                     | An unorganized list of all byda elements on the page.                                                 |
 | map      | object   |                     | Compare a simple data structure against the Flash and commit the changes.                             |
 | organize | function |                     | Organize all elements from this.list or an array specified as the first parameter.                    |
-| run      | function | before, after       | Commit the changes of each store after they have been generated with before and after callbacks.                                    |
+| run      | function | start, finish       | Commit the changes of each store after they have been generated with before and after callbacks.                                    |
 | stores   | object   |                     | Contains organizations of byda elements (stores) that exist on the page when the flash was generated. |
 | update   | function |                     | Refresh the flash with a new list and organize the list into stores.                                  |
 
