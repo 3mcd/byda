@@ -372,7 +372,7 @@ Returns an array of all byda elements on the page.
 | get   | function |                | Return the value of the store. |
 | set   | function | value, options | Set the value of the store.    |
 
-License
+##License
 
 (The MIT License)
 
