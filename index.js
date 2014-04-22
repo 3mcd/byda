@@ -288,7 +288,7 @@
         for ( _i = this.list.length - 1; _i >= 0; _i-- ) {
             node = this.list[ _i ];
 
-            if ( node.hasAttribute( 'value' ) ) node.value = value;
+            if ( 'value' in node ) node.value = value;
             else node.innerHTML = value;
         }
 
