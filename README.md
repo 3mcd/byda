@@ -8,7 +8,7 @@ page reload ) via
 library provides a public API that allows it to be implemented in a variety
 of ways outside the core implementation.
 
-Byda is currently < 4kb minified.
+Byda is currently ~4kb minified.
 
 ### Concept
 
