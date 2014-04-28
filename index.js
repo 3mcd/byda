@@ -1,4 +1,4 @@
-/*! Byda.js 1.3.2|| Eric McDaniel */
+/*! Byda.js 2.0.0 || Eric McDaniel */
 ;( function( window, document ) {
 
     'use strict';
@@ -235,9 +235,10 @@
      */
 
     /**
-     * An organization of Byda elements and public methods to manipulate them with.
-     * @param {String} name  Name of the store
-     * @param {String} value Value of the store
+     * [Store description]
+     * @param {String} name      Name of the store
+     * @param {String} value     Value of the store
+     * @param {Function} animation Animation function to perform
      */
     function Store( name, value, animation ) {
         this.name = name;
