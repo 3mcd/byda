@@ -147,32 +147,46 @@ documentation below.
 ##Core
 
 The Byda public API is accessed through the `byda` method. This method can be
-initialized with the options `file`, `view`, `json`, and `dom`, where
+initialized with the options `file`, `view`, `json`, `animations`, and `dom`,
+where:
 
 * `file` is the path of a file to be parsed as HTML,
 
-* `view` is shorthand for `file: 'views/' + file + '.html'`,
+* `view` is simply shorthand for `file: 'views/' + file + '.html'`,
 
 * `json` is an object formatted in key-value pairs ( where the key is an
 identifier and the value is a path to the json file ) or the path to the json
 file as a string,
 
-* and `dom` is a 'container' or 'parent' element to contain the function to.
+* `animation` is an object formatted in key-value pairs where the key is the
+name of a store and the value is a function passed back reference to an element
+animating out ( from ), a newly cloned element animating in ( to ) and a
+complete function ( done ),
+
+* and `dom` is a 'container' or 'parent' element to contain the Flash to.
 
 You can pass a callback to the `byda()` function as the second parameter. The
-function will be executed with two parameters: `flash` and `data`.
+function will be executed with `this` bound to a new Flash, and one paramter
+`data` that contains the JSON response objects.
 
-###flash
+###this
 
-The first parameter of the callback will be passed a _Flash_ object that
-contains important info about the newly loaded content. This object includes a
-'stores' object that contains elements organized by their data-attribute value.
-Each organization is called a store.
+The `this` value of the callback will be a _Flash_ object that contains
+important info about the newly loaded content. This object includes a 'stores'
+object that contains elements organized by their data-attribute value. Each
+organization is called a Store.
+
+####path/to/file.html
+
+```html
+    <h2 data-load="title">Byda Example</h2>
+    ...
+```
 
 ```javascript
-byda( 'path/to/file.html' , function( flash ) {
+byda( 'path/to/file.html' , function( ) {
 	// Access the title store (which contains one element)
-	console.log( flash.find( 'title' ).get() ); // 'Byda Example'
+	this.find( 'title' ).get(); // returns 'Byda Example'
 } );
 ```
 
@@ -182,18 +196,21 @@ byda( 'path/to/file.html' , function( flash ) {
 the byda() function.
 
 ```javascript
-function calendar( flash, data ) {
-	var activities = data.activities;
+var calendar = {
+    options: {
+        view: 'calendar',
+        json: { 'activites' : 'includes/json/activities.json' },
+    },
+    action: function( data ) {
+        var activities = data.activities;
 
-	$.each( days, function( index, value ) {
-		$( '#calendar' ).append( index + ': ' + activities[index] );
-	} );
-}
+        $.each( days, function( index, value ) {
+            $( '#calendar' ).append( index + ': ' + activities[index] );
+        } );
+    }
+};
 
-byda( {
-	view: 'calendar',
-	json: { 'activites' : 'includes/json/activities.json' },
-}, calendar );
+byda( calendar.options, calendar.action );
 ```
 
 ##pushState
@@ -203,12 +220,13 @@ lets us utilize pushState routing for our app:
 
 ```javascript
 page( '/', function( ctx ) {
-	byda( { view:'home' } );
+	byda( home.options );
 });
 
 page( '/calendar/:day', function( ctx ) {
+    // Route callbacks are passed back a ctx parameter that contains info about the route.
 	var day = ctx.params.day;
-	byda( /* options */, function( flash, data ) {
+	byda( calendar.options, function( data ) {
 		console.log( data.activities[ day ] );
 	});
 });
@@ -220,48 +238,70 @@ You can now navigate through your Ajax loads with the browser history.
 
 ##Animations
 
-Byda handles animations via the initialization option `animation`. The option
-should be passed an object with key-value pairs where the key is the name of
-the store to be animated and the value is a function. The function is passed a
-reference to the element animating out, a newly-cloned element to animate in
-and a callback function to run when the animation is complete.
+Byda handles animations via the option `animations`. The option should be
+passed an object with key-value pairs where the key is the name of the store
+to be animated and the value is a function. The function is passed a reference
+to the element animating out, a newly-cloned element to animate in and a
+callback function to run when the animation is complete.
 
-You can ( and should ) design animations to be reused throughout your application,
-although those measures were not taken for this example.
+You can design animations to be reused throughout your application.
 
 Here is an example animation function using jQuery and animate.css:
 
 ```javascript
-byda.init( {
-    animation: {
-        "content": function( from, to, next ) {
-            $( from ).css( 'position', 'absolute' );
-            $( from ).one( 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
-                $( from ).remove();
-                $( to ).removeClass( 'animated slideInRight' );
-                next();
-            });
-            $( from ).after( to );
-            $( from ).addClass('animated slideOutLeft' );
-            $( to ).addClass( 'animated slideInRight' );
-        }
+var slideAnimation = function( from, to, done ) {
+    $( from ).css( 'position', 'absolute' );
+    $( from ).one( 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
+        done();
+    });
+    $( from ).after( to );
+    $( from ).addClass('animated slideOutLeft' );
+    $( to ).addClass( 'animated slideInRight' );
+}
+
+...
+
+byda({
+    view: 'main',
+    animations: {
+        content: slideAnimation
     }
- });
+}, callback );
 ```
 
-Be sure to call `next()` when you are done with your animation / DOM
+Be sure to call `done()` when you are done with your animation / DOM
 manipulation, as it lets the core know when to end.
+
+##Blockers
+
+Byda can recognize particular elements as 'blockers'. These are parent elements
+who's contents will be organized into a Flash only if that Flash was made
+at the level of that element. This is useful if you want to reuse store names
+and encapsulate byda functionality in the DOM.
+
+A blocker is any data-load value with a trailing `^`.
+
+```html
+
+<div data-load="content"></div>
+
+<div data-load="^">
+    <!-- An encapsulated byda element -->
+    <div data-load="content"></div>
+</div>
+
+```
 
 ######Notes
 
-* The buffer will occur before  the global 'complete' callback and after the
-'local', callback passed in as the second parameter of `byda()`.
+* The animation function occurs before the global 'complete' callback and
+after the 'local' callback passed in as the second parameter of `byda()`.
 
 ##Public API
 
 ###byda( options, callback )
 Load data into your document by data attributes through XHR or HTML5 imports
-(if the browser supports it and byda was initialized with 'imports' = true).
+( if the browser supports it and byda was initialized with 'imports' = true ).
 
 | Option   | typeof   | Description                                                                      |
 |----------|----------|----------------------------------------------------------------------------------|

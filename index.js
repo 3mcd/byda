@@ -109,7 +109,7 @@
             // If an identical link element was found, use it.
             if ( current ) {
                 options.imp = current['import'];
-                return _request( options ); // Start XHR with options.
+                return request( options ); // Start XHR with options.
             }
 
             var link = document.createElement( 'link' ); // Create a new link element.
@@ -122,17 +122,17 @@
             // that were passed in the options.
             link.onload = function( e ) {
                 options.imp = link['import'];
-                _request( options );
+                request( options );
             };
 
             link.onerror = function( e ) {
-                _failure( options ); // Handle the error.
+                failure( options ); // Handle the error.
             };
 
             // Append the newly created link element to the head of the document.
             document.head.appendChild( link );
         } else {
-            _request( options );
+            request( options );
         }
     }
 
@@ -140,17 +140,17 @@
      * Retrieve the contents of JSON files and the view or template.
      * @param  {Object} options Options
      */
-    function _request( options ) {
+    function request( options ) {
         var response; // Stores the raw responseText or JSON parsed responseText.
         var json = options.json.req[ 0 ]; // Stores the JSON request (if any).
 
         // Set the file in question to options.file or the file in a JSON request (if any).
         var file = json ? json.file : options.file;
 
-        // Complete and run _success() if an HTML import took place. Complete prematurely if no
+        // Complete and run success() if an HTML import took place. Complete prematurely if no
         // file found.
-        if ( !file ) return _complete( options );
-        if ( options.imp ) return _success( options.imp, options );
+        if ( !file ) return success( '', options );
+        if ( options.imp ) return success( options.imp, options );
 
         // Abort if xhr exists and the readyState is less than 4 (complete).
         if ( xhr && xhr.readyState < 4 ) {
@@ -176,8 +176,8 @@
                     // If there is a json, parse the responseText as JSON.
                     var text = xhr.responseText;
 
-                    // Complete and run _success if it was not a request for a JSON file.
-                    if ( !json ) return _success( text, options );
+                    // Complete and run success if it was not a request for a JSON file.
+                    if ( !json ) return success( text, options );
 
                     // Parse the response as JSON.
                     response = JSON.parse( text );
@@ -189,13 +189,13 @@
                     else options.json.res[ json.name ] = response;
 
                     // Begin a new request with the remaining options.
-                    _request( options );
+                    request( options );
                 } else {
                     // If the request was a JSON request:
-                    if ( json ) _request( options );
+                    if ( json ) request( options );
 
                     // Couldn't find the view file, so no content could be loaded.
-                    _failure( options );
+                    failure( options );
                 }
             }
         };
@@ -208,7 +208,7 @@
      * @param  {String} response A response string to use as a DOM
      * @param  {Object} options  Options
      */
-    function _success( response, options ) {
+    function success( response, options ) {
         byda.flash( { dom: options.dom, animations: options.animations } ) // Create a new flash.
             .generate( byda.flash( { // Create a flash based on the response and generate changes.
                 dom: response
@@ -224,7 +224,7 @@
      * XHR or HTML import failure handler.
      * @param  {Object} options Options
      */
-    function _failure( options ) {
+    function failure( options ) {
         throw new Error( 'Could not get: ' + options.file );
     }
 
@@ -400,7 +400,7 @@
     Flash.prototype.count = function() {
         var _i = 0;
 
-        for (var store in this.stores) _i++;
+        for ( var store in this.stores ) _i++;
 
         return _i;
     };
