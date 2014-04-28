@@ -31,7 +31,7 @@
         position: relative;
     }
 
-    .Slider > img {
+    .Slider > div > img {
         width: 100%;
     }
 
@@ -82,7 +82,7 @@
     <div class="HolyGrail-body">
 
         <article class="HolyGrail-content">
-            <h2 data-load="article-subtitle">A neat (and super awesome) article</h2>
+            <h2 data-load="subtitle">A neat (and super awesome) article</h2>
             <nav class="MiniNav">
                 <ul>
                     <li data-section="index">Intro</li>
@@ -90,18 +90,21 @@
                     <li data-section="page-2">Page 2</li>
                 </ul>
             </nav>
-            <div data-load="article-content">This article de-mystifies every aspect of the Universe.</div>
+            <div data-load="content">This article de-mystifies every aspect of the Universe.</div>
         </article>
 
         <article class="HolyGrail-content">
-            <div class="Slider hover" data-load="slider">
-                <h2>Click here to load images.</h2>
+            <div id="slider-1" class="Slider hover" data-load="slider^">
+                <div data-load="content">
+                    <h2>Click here to load images.</h2>
+                </div>
+                <div data-load="caption"></div>
             </div>
         </article>
 
-    </div>
+    </div
 
-    <footer class="Footer">
+    ^<footer class="Footer">
         <div class="Footer-credits">
             <span class="Footer-credit">FlexBox Holy Grail designed by <a href="http://philipwalton.com">Philip Walton</a> &copy; 2014.</span>
         </div>
@@ -121,7 +124,6 @@
             $to = $(to);
             $from.css('position', 'absolute');
             $from.one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
-                $from.remove();
                 $to.removeClass(_classTo);
                 next();
             });
@@ -143,40 +145,46 @@
         byda({ view: 'article/' + $(this).data('section') });
     });
 
-    var Slider = {
-        bindEvents: function() {
-            var me = this;
-            this.$el.on('click', function() {
-                me.pos = me.pos < me.views.length - 1 ? me.pos + 1 : 0;
-                byda({ view: 'slider/' + me.views[me.pos] });
-            });
-        },
-        init: function(el) {
-            var me = this;
-            this.selector = el;
-            this.$el = $(this.selector);
-            this.bindEvents();
-        },
-        pos: 0,
-        refresh: function() {
-            this.$el = $(this.selector);
-            this.bindEvents();
-        },
-        views: ['index', 'content-1', 'content-2', 'content-3']
+    var BydaSlider = function( selector, list, captions ) {
+        this.selector = selector;
+        this.$el = document.querySelector( selector );
+        this.list = list;
+        this.captions = captions;
+        this.pos = 0;
+
+        this.bindEvents();
     };
+
+    BydaSlider.prototype.bindEvents = function() {
+        var me = this;
+        this.$el.addEventListener('click', function() {
+            me.pos = me.pos < me.list.length - 1 ? me.pos + 1 : 0;
+            var options = {
+                view: 'slider/' + me.list[me.pos],
+                dom: me.$el,
+                json: me.captions,
+                animations: {
+                    'content': animations.fade
+                }
+            };
+            byda( options , function( data ) {
+                this.find('caption').set( data[ me.list[me.pos] ]);
+            });
+        });
+    };
+
+    BydaSlider.prototype.refresh = function() {
+        this.$el = document.querySelector( this.selector );
+    };
+
+    slider1 = new BydaSlider( '#slider-1', [ 'index', 'content-1', 'content-2', 'content-3' ], 'views/slider/captions.json' );
 
     byda.init({
         imports: true,
-        animation: {
-            slider: function( from, to, next ) {
-                animations.fade( from, to, next );
-                Slider.refresh();
-            },
-            "article-subtitle": animations.fall
+        animations: {
+            "subtitle": animations.fall
         }
     });
-
-    Slider.init( '.Slider' );
 
     </script>
 </body>

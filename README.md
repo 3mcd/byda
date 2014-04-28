@@ -284,7 +284,6 @@ You can of course initialize byda with options:
 byda.init( {
 	base: '/examples',
 	data: 'foo', // will now look for elements with the attribute 'data-foo'
-	localCache: localStorage
 } );
 ```
 
@@ -292,11 +291,9 @@ byda.init( {
 |------------|----------|------------------------------------------------------------------------------------------------------------------------------------------|
 | base       | string   | Prepend a base path to all of the requests and imports you perform with byda.                                                            |
 | animation  | object   | Map animation functions (that recieve a cloned element to animate) to stores to perform before the global callback and after the local callback. |
-| cache      | object   | Synchronize byda stores with an object.                                                                                                  |
 | complete   | function | A global complete function that will call after byda is finished.                                                                        |
 | data       | string   | Specify a custom data attribute prefix to use. The default is 'load'.                                                                    |
 | imports    | boolean  | Use HTML5 imports instead of XHR.                                                                                                         |
-| local 	 | object   | Synchronize byda stores with a local cache such as localStorage to make your data persist.                                               |
 
 ######Notes
 * Byda will fallback to XHR if the clients browser does not support HTML5
@@ -309,32 +306,6 @@ Returns a `Flash` object:
 |--------|---------|----------------------------------------------------------------------|
 | dom    | object / string  | A string parsed as HTML or parent node to generate the flash from. |
 | frozen | boolean | Clone elements before before pushing them to the list.               |
-
-__Example (with caching):__
-
-```javascript
-page( '/notepad/:id', function( ctx ) {
-	// Set the notepad variable to the id prefixed with 'notepad-'. This is our notepad
-	// store name.
-	var notepad = 'notepad-' + ctx.params.id;
-	byda( { view: 'notepad' }, function( flash ) {
-		// Append the notepad to the page.
-		$( '.Notes' ).append( '<textarea id="notepad" data-load="' + notes + '"></textarea>' );
-		// Create a new flash with the updated DOM. Could also call
-		// flash.update() and just use the flash that was passed back.
-        var newFlash = byda.flash();
-        var store = newFlash.find( notes );
-        // Set the notepad store to the cached store value.
-        store.set();
-        // When the input value changes, set the notepad store value to the
-        // textarea value.
-        $( '#notepad' ).on( 'input propertychange', function() {
-            store.set( $( this ).val(), { cache: true } );
-        });
-	});
-
-});
-```
 
 __Example ( scoped flash ):__
 
