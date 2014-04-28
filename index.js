@@ -110,7 +110,7 @@
 
             // If an identical link element was found, use it.
             if ( current ) {
-                options.imp = current['import'];
+                options.imp = current[ 'import' ];
                 return request( options ); // Start XHR with options.
             }
 
@@ -123,7 +123,7 @@
             // the options.imp property and start a new request to catch any json requests
             // that were passed in the options.
             link.onload = function( e ) {
-                options.imp = link['import'];
+                options.imp = link[ 'import' ];
                 request( options );
             };
 
