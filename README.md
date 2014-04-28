@@ -144,6 +144,21 @@ byda.flash().generate( simulated ).run();
 * These functions ( flash, generate, run ) are listed and described in the API
 documentation below.
 
+* If Byda is passed a function as the first parameter, the function will be
+executed with `this` bound to a new flash. For example:
+
+```javascript
+var one, two;
+
+byda( function() {
+    one = this;
+});
+
+two = byda.flash();
+
+// 'one' contains a flash identical to 'two'
+```
+
 ##Core
 
 The Byda public API is accessed through the `byda` method. This method can be
@@ -158,7 +173,7 @@ where:
 identifier and the value is a path to the json file ) or the path to the json
 file as a string,
 
-* `animation` is an object formatted in key-value pairs where the key is the
+* `animations` is an object formatted in key-value pairs where the key is the
 name of a store and the value is a function passed back reference to an element
 animating out ( from ), a newly cloned element animating in ( to ) and a
 complete function ( done ),
@@ -272,6 +287,11 @@ byda({
 Be sure to call `done()` when you are done with your animation / DOM
 manipulation, as it lets the core know when to end.
 
+######Notes
+
+* The animation function occurs before the global 'complete' callback and
+after the 'local' callback passed in as the second parameter of `byda()`.
+
 ##Blockers
 
 Byda can recognize particular elements as 'blockers'. These are parent elements
@@ -282,20 +302,24 @@ and encapsulate byda functionality in the DOM.
 A blocker is any data-load value with a trailing `^`.
 
 ```html
-
+<!-- Outer element -->
 <div data-load="content"></div>
 
-<div data-load="^">
-    <!-- An encapsulated byda element -->
+<div id="Module" data-load="^">
+    <!-- Inner element -->
     <div data-load="content"></div>
 </div>
-
 ```
 
-######Notes
+```js
+byda( function() {
+    this.find( 'content' ); // Outer element
+});
 
-* The animation function occurs before the global 'complete' callback and
-after the 'local' callback passed in as the second parameter of `byda()`.
+byda( { dom: document.getElementById( 'Module' ) }, function() {
+    this.find( 'content' ); // Inner element
+});
+```
 
 ##Public API
 
@@ -330,7 +354,7 @@ byda.init( {
 | Option     | typeof   | Description                                                                                                                              |
 |------------|----------|------------------------------------------------------------------------------------------------------------------------------------------|
 | base       | string   | Prepend a base path to all of the requests and imports you perform with byda.                                                            |
-| animation  | object   | Map animation functions (that recieve a cloned element to animate) to stores to perform before the global callback and after the local callback. |
+| animations | object   | Map animation functions (that recieve a cloned element to animate) to stores to perform before the global callback and after the local callback. |
 | complete   | function | A global complete function that will call after byda is finished.                                                                        |
 | data       | string   | Specify a custom data attribute prefix to use. The default is 'load'.                                                                    |
 | imports    | boolean  | Use HTML5 imports instead of XHR.                                                                                                         |
@@ -350,7 +374,7 @@ Returns a `Flash` object:
 __Example ( scoped flash ):__
 
 ```javascript
-var scopedFlash = byda.flash( { dom: document.querySelector( '#content' ) } );
+var scopedFlash = byda.flash( { dom: document.getElementById( 'Content' ) } );
 ```
 
 `scopedFlash`'s list and stores are generated from byda elements within the element with
@@ -359,7 +383,6 @@ byda elements within 'content'.
 
 ###byda.get
 Returns an array of all byda elements on the page.
-
 
 ####Flash API
 

@@ -80,6 +80,8 @@
         // Halt if the function wasn't passed options.
         if ( !options ) return;
 
+        if ( 'function' == typeof options ) return options.apply( byda.flash() );
+
         // Assume a string passed as the first parameter is a path to a file.
         if ( 'string' == typeof options ) options = { file: options };
 
