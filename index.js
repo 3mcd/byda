@@ -1,4 +1,4 @@
-/*! Byda.js 2.0.0 || Eric McDaniel */
+/*! Byda.js 2.0.1 || Eric McDaniel */
 ;( function( window, document ) {
 
     'use strict';
@@ -355,7 +355,7 @@
 
                 clone = el.cloneNode( true ); // Clone the 'animating-out' node.
 
-                el.removeAttribute( 'data-' + suffix ); // Remove the byda attribute to prevent duplicates
+                el.setAttribute( 'data-' + suffix, '^' ); // Block the byda element to prevent duplicates
 
                 clone.innerHTML = value; // Set up the innerHTML content of the 'animating-in' node.
 
