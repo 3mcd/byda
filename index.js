@@ -152,7 +152,7 @@
         // Complete and run success() if an HTML import took place. Complete prematurely if no
         // file found.
         if ( !file ) return success( '', options );
-        if ( options.imp ) return success( options.imp, options );
+        // if ( options.imp ) return success( options.imp, options );
 
         // Abort if xhr exists and the readyState is less than 4 (complete).
         if ( xhr && xhr.readyState < 4 ) {
