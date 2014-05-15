@@ -1,6 +1,6 @@
 {
   "name": "byda",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Load HTML content via HTML5 imports or XHR",
   "main": "index.js",
   "directories": {

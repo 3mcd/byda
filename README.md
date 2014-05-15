@@ -1,5 +1,5 @@
 #byda.js [![Build Status](https://travis-ci.org/ericmcdaniel/byda.svg?branch=master)](https://travis-ci.org/ericmcdaniel/byda)
-###2.0.1
+###2.0.2
 
 Byda is a JavaScript library that facilitates content swapping ( without
 page reload ) via
