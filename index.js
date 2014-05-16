@@ -243,7 +243,6 @@
     function Store( name, value, animation ) {
         this.name = name;
         this.list = [];
-        this.changes = [];
         this.animation = animation;
         this.value = value;
     }
