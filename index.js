@@ -329,19 +329,19 @@
         // Set value (if applicable) and run the done callback.
         function complete() {
             if ( value ) that.set( value );
-            if ( el ) el.parentNode.removeChild( el );
+            if ( el ) {
+                if ( el.parentNode ) el.parentNode.removeChild( el );
+            }
             return done && done( that.name );
         }
 
         if ( !this.to ) return complete(); // Complete the commit if no change is present.
 
-        var _i, clone;
-
         // If this.to is an element, set the value to the value attribute or innerHTML content. If
         // not, set the value to this.to.
         var value = isNode( this.to ) ? this.to.value || this.to.innerHTML : this.to;
         var list = this.list; // Reference the list.
-        var el;
+        var el, clone;
 
         if ( !value ) value = '';
 
@@ -349,7 +349,7 @@
         // store, perform the animation with the 'animating-out' and 'animating-in' elements,
         // and a callback function.
         if ( 'function' == typeof this.animation ) {
-            for ( _i = list.length - 1; _i >= 0; _i-- ) {
+            for ( var _i = list.length - 1; _i >= 0; _i-- ) {
                 el = list[ _i ];
 
                 clone = el.cloneNode( true ); // Clone the 'animating-out' node.
