@@ -10,7 +10,6 @@
     var noop = function() {}; // An empty callback function.
 
     var base, // Default base path
-        disabled, // Disabled flag
         animations = {}, // A hash that specifies animation callbacks for stores.
         imports, // Utilize HTML5 imports instead of XHR.
         supportsImports = 'import' in document.createElement( 'link' ),
@@ -79,7 +78,7 @@
      */
     function byda( options, callback ) {
         // Halt if the function wasn't passed options.
-        if ( !options || disabled ) return;
+        if ( !options ) return;
 
         if ( 'function' == typeof options ) return options.apply( byda.flash() );
 
@@ -553,9 +552,6 @@
     byda.flash = function( options ) {
         return new Flash( options );
     };
-
-    byda.disable = function() { disabled = true; };
-    byda.enable = function() { disabled = false; };
 
     /**
      * Expose Byda
