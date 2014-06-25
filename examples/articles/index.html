@@ -110,82 +110,19 @@
         </div>
     </footer>
 
-    <script src="../zepto.min.js"></script>
-    <script src="http://philipwalton.github.io/solved-by-flexbox/scripts/scripts.min.js"></script>
-    <script src="../../index.js"></script>
+    <script src="../require.min.js"></script>
+
     <script>
 
-    function Animation( classFrom, classTo ) {
-        var _classFrom = 'animated ' + classFrom;
-        var _classTo = 'animated ' + classTo;
-
-        var _action = function( from, to, next ) {
-            $from = $(from);
-            $to = $(to);
-            $from.css('position', 'absolute');
-            $from.one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
-                $to.removeClass(_classTo);
-                next();
-            });
-            $from.after($to);
-            $from.addClass(_classFrom);
-            $to.addClass(_classTo);
-        };
-
-        return _action;
-    }
-
-
-    animations = {};
-
-    animations.fall = Animation('slideOutLeft', 'fadeIn');
-    animations.fade = Animation('slideOutRight', 'fadeIn');
-
-    $('.MiniNav li').on('click', function() {
-        byda({ view: 'article/' + $(this).data('section') });
-    });
-
-    var BydaSlider = function( selector, list, captions ) {
-        this.selector = selector;
-        this.$el = document.querySelector( selector );
-        this.list = list;
-        this.captions = captions;
-        this.pos = 0;
-
-        this.bindEvents();
-    };
-
-    BydaSlider.prototype.bindEvents = function() {
-        var me = this;
-        this.$el.addEventListener('click', function() {
-            me.pos = me.pos < me.list.length - 1 ? me.pos + 1 : 0;
-            var options = {
-                view: 'slider/' + me.list[me.pos],
-                dom: me.$el,
-                json: me.captions,
-                animations: {
-                    'content': animations.fade
-                }
-            };
-            byda( options , function( data ) {
-                this.find('caption').set( data[ me.list[me.pos] ]);
-            });
-        });
-    };
-
-    BydaSlider.prototype.refresh = function() {
-        this.$el = document.querySelector( this.selector );
-    };
-
-    slider1 = new BydaSlider( '#slider-1', [ 'index', 'content-1', 'content-2', 'content-3' ], 'views/slider/captions.json' );
-
-    byda.init({
-        imports: true,
-        animations: {
-            "subtitle": animations.fall
+    require.config( {
+        paths: {
+            zepto   : '../zepto.min',
+            byda    : '../../index',
+            main    : 'index'
         }
-    });
+    } );
 
+    require( [ 'main' ] );
     </script>
 </body>
 

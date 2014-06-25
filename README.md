@@ -1,5 +1,5 @@
 #byda.js [![Build Status](https://travis-ci.org/ericmcdaniel/byda.svg?branch=master)](https://travis-ci.org/ericmcdaniel/byda)
-###2.0.2
+###2.0.4
 
 Byda is a JavaScript library that facilitates content swapping ( without
 page reload ) via
@@ -8,7 +8,7 @@ page reload ) via
 library provides a public API that allows it to be implemented in a variety
 of ways outside the core implementation.
 
-Byda is currently ~4kb minified.
+Byda is currently ~4.5kb minified and ~2k minified + gzipped.
 
 ### Concept
 
@@ -25,6 +25,8 @@ and _Store_ are also exposed to provide more flexibility to authors.
 * work cross browser and cross platform,
 
 * be optimized for mobile platforms,
+
+* cache flashes in memory to improve performance,
 
 * and stay < 5k in size.
 
@@ -162,7 +164,7 @@ two = byda.flash();
 ##Core
 
 The Byda public API is accessed through the `byda` method. This method can be
-initialized with the options `file`, `view`, `json`, `animations`, and `dom`,
+initialized with the options `file`, `view`, `json`, `transitions`, and `dom`,
 where:
 
 * `file` is the path of a file to be parsed as HTML,
@@ -173,7 +175,7 @@ where:
 identifier and the value is a path to the json file ) or the path to the json
 file as a string,
 
-* `animations` is an object formatted in key-value pairs where the key is the
+* `transitions` is an object formatted in key-value pairs where the key is the
 name of a store and the value is a function passed back reference to an element
 animating out ( from ), a newly cloned element animating in ( to ) and a
 complete function ( done ),
@@ -251,15 +253,15 @@ page();
 
 You can now navigate through your Ajax loads with the browser history.
 
-##Animations
+##Transitions
 
-Byda handles animations via the option `animations`. The option should be
+Byda handles transitions via the option `transitions`. The option should be
 passed an object with key-value pairs where the key is the name of the store
 to be animated and the value is a function. The function is passed a reference
 to the element animating out, a newly-cloned element to animate in and a
 callback function to run when the animation is complete.
 
-You can design animations to be reused throughout your application.
+You can design transitions to be reused throughout your application.
 
 Here is an example animation function using jQuery and animate.css:
 
@@ -278,7 +280,7 @@ var slideAnimation = function( from, to, done ) {
 
 byda({
     view: 'main',
-    animations: {
+    transitions: {
         content: slideAnimation
     }
 }, callback );
@@ -354,7 +356,7 @@ byda.init( {
 | Option     | typeof   | Description                                                                                                                              |
 |------------|----------|------------------------------------------------------------------------------------------------------------------------------------------|
 | base       | string   | Prepend a base path to all of the requests and imports you perform with byda.                                                            |
-| animations | object   | Map animation functions (that recieve a cloned element to animate) to stores to perform before the global callback and after the local callback. |
+| transitions | object   | Map animation functions (that recieve a cloned element to animate) to stores to perform before the global callback and after the local callback. |
 | complete   | function | A global complete function that will call after byda is finished.                                                                        |
 | data       | string   | Specify a custom data attribute prefix to use. The default is 'load'.                                                                    |
 | imports    | boolean  | Use HTML5 imports instead of XHR.                                                                                                         |
