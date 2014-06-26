@@ -52,18 +52,6 @@ contains.
 store. Calling `store.set( value )` will set the innerHTML ( or value for inputs )
 of all of the elements in the list to the specified string.
 
-
-##Examples
-
-* `git clone https://github.com/ericmcdaniel/byda/`,
-
-* `cd byda`,
-
-* `python -m SimpleHTTPServer`,
-
-* point your browser to localhost:8000
-
-
 ###Basic Example
 
 Here is a very simple example of content loading with Byda.
