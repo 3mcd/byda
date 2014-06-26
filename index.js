@@ -1,4 +1,4 @@
-/*! Byda.js 2.0.4 || Eric McDaniel */
+/*! Byda.js 2.1.0 || Eric McDaniel */
 ;( function ( root, factory ) {
     factory = factory.bind( null, window, document );
     if ( typeof exports === 'object' ) {
