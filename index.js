@@ -11,7 +11,7 @@
         // Browser global
         root.byda = factory();
     }
-} ( this, function( window, document ) {
+} ( this, function( w, d ) {
 
     'use strict';
 
@@ -21,18 +21,24 @@
 
     var noop = function() {}; // An empty callback function.
 
-    var base, // Default base path
-        transitions = {}, // A hash that specifies transition callbacks for stores.
-        cache = {},
-        imports, // Utilize HTML5 imports instead of XHR.
-        supportsImports = 'import' in document.createElement( 'link' ),
-        suffix = 'load', // Default data-attribute suffix.
-        complete = noop; // A callback function to be run when Byda is complete.
+    var base,                       // Default base path
+        transitions     = {},       // A hash that specifies transition callbacks for stores.
+        cache           = {},       // Store flashes in memory for performance
+        suffix          = 'load',   // Default data-attribute suffix.
+        complete        = noop,     // A callback function to be run when Byda is complete.
+        imports         = true,     // Utilize HTML5 imports instead of XHR.
+        supportsImports = 'import' in d.createElement( 'link' );
+
 
     /**
      * Helpers
      */
 
+    /**
+     * Parse a string as DOM
+     * @param  {String} string A string of HTML
+     * @return {Document}
+     */
     function parseAsDOM ( string ) {
         return 'string' == typeof string ? new DOMParser().parseFromString( string, 'text/html' ) : string;
     }
@@ -104,17 +110,11 @@
         // options.view is shorthand for 'views/{name}.html'.
         if ( options.view ) options.file = 'views/' + options.view + '.html';
 
+        // If a base path is specified, prepend it to the file path.
+        options.file = base ? base + '/' + options.file : options.file;
+
         // Assign the callback (if any) to the options.callback property.
         options.callback = callback || noop;
-
-        // Restructure the options.json object based on its type.
-        options.json = {
-            req: 'string' == typeof options.json ? [ {
-                name: 'default',
-                file: options.json
-            } ] : options.json || [],
-            res: {}
-        };
 
         options.imp = cache[ options.file ];
 
@@ -124,7 +124,7 @@
             var href = base ? base + '/' + options.file : options.file;
 
             // Detect a current link element with an identical href value.
-            var current = document.querySelector( 'link[href="' + href + '"]' );
+            var current = d.querySelector( 'link[href="' + href + '"]' );
 
             // If an identical link element was found, use it.
             if ( current ) {
@@ -132,40 +132,36 @@
                 return request( options ); // Start XHR with options.
             }
 
-            var link = document.createElement( 'link' ); // Create a new link element.
+            var link = d.createElement( 'link' ); // Create a new link element.
 
             link.rel = 'import'; // Specify the link elements relationship as an import.
             link.href = href; // Apply the href to the element.
 
             // When the link attribute is done loading, reference the import contents with
-            // the options.imp property and start a new request to catch any json requests
-            // that were passed in the options.
+            // the options.imp property
             link.onload = function( e ) {
                 options.imp = link[ 'import' ];
-                request( options );
+                success( options );
             };
 
             link.onerror = function( e ) {
                 failure( options ); // Handle the error.
             };
 
-            // Append the newly created link element to the head of the document.
-            document.head.appendChild( link );
+            // Append the newly created link element to the head of the d.
+            d.head.appendChild( link );
         } else {
             request( options );
         }
     }
 
     /**
-     * Retrieve the contents of JSON files and the view or template.
+     * Retrieve the contents the view.
      * @param  {Object} options Options
      */
     function request( options ) {
-        var response; // Stores the raw responseText or JSON parsed responseText.
-        var json = options.json.req[ 0 ]; // Stores the JSON request (if any).
-
-        // Set the file in question to options.file or the file in a JSON request (if any).
-        var file = json ? json.file : options.file;
+        var response, // Stores the raw responseText
+            file = options.file;
 
         // Complete and run success() if an import took place. Complete prematurely if no
         // file found.
@@ -180,39 +176,17 @@
         // Create a new XMLHtttpRequest.
         var xhr = new XMLHttpRequest();
 
-        // If a base path is specified, prepend it to the file path.
-        file = base ? base + '/' + file : file;
-
         xhr.open( 'GET', file, true );
         xhr.setRequestHeader( 'X-BYDA', 'true' );
 
         xhr.onreadystatechange = function() {
             if ( xhr.readyState == 4 ) {
-                if ( json ) options.json.req.splice( 0, 1 );
                 // If the XHR status returns 200 (got the file) or the file string contains
                 // "file:///" (important for mobile/PhoneGap applications)
                 if ( xhr.status == 200 || ( xhr.status === 0 && file.indexOf( 'file:///' ) != -1 ) ) {
-                    // If there is a json, parse the responseText as JSON.
-                    var text = xhr.responseText;
-
-                    // Complete and run success if it was not a request for a JSON file.
-                    if ( !json ) return success( text, options );
-
-                    // Parse the response as JSON.
-                    response = JSON.parse( text );
-
-                    // If it is a single, default request, set the result to the response for
-                    // easy access upon completion. If there are multiple requests, add it to
-                    // the results object.
-                    if ( json.name == 'default' ) options.json.res = response;
-                    else options.json.res[ json.name ] = response;
-
-                    // Begin a new request with the remaining options.
-                    request( options );
+                    // Complete and run success
+                    return success( xhr.responseText, options );
                 } else {
-                    // If the request was a JSON request:
-                    if ( json ) request( options );
-
                     // Couldn't find the view file, so no content could be loaded.
                     failure( options );
                 }
@@ -235,13 +209,17 @@
         cache[ options.file ] = sim;
 
         setTimeout( function () {
-            byda.flash( { dom: options.dom, transitions: options.transitions } ) // Create a new flash.
+            byda
+                .flash( { dom: options.dom, transitions: options.transitions } ) // Create a new flash.
                 .generate( sim )
-                .run( function() { // Perform the changes with start and finish callbacks.
-                    options.callback.apply( this.update(), [ options.json.res ] );
-                }, function() {
-                    complete( options ); // Perform the global callback.
-                } );
+                .run(
+                    function() { // Perform the changes with start and finish callbacks.
+                        options.callback( this.update() );
+                    },
+                    function() {
+                        complete( options ); // Perform the global callback.
+                    }
+                );
         }, 0 );
     }
 
@@ -270,121 +248,124 @@
         this.value = value;
     }
 
-    /**
-     * Trigger a 'byda' event on the window with details of the store and change.
-     */
-    Store.prototype.emit = function() {
-        var e;
-        var options = {
-            detail: {
-                name: this.name,
-                value: this.value
-            },
-            bubbles: true,
-            cancelable: true
-        };
+    Store.prototype = {
 
-        if ( 'function' == typeof CustomEvent ) {
-            e = new CustomEvent( 'byda', options );
-        } else if ( document.createEvent ) {
-            e = document.createEvent( 'CustomEvent' );
-            e.initCustomEvent( 'byda', options.bubbles, options.cancelable, options.detail );
-        }
+        /**
+         * Trigger a 'byda' event on the w with details of the store and change.
+         */
+        emit : function() {
+            var e;
+            var options = {
+                detail: {
+                    name: this.name,
+                    value: this.value
+                },
+                bubbles: true,
+                cancelable: true
+            };
 
-        window.dispatchEvent( e );
-    };
-
-    /**
-     * Set the value of a store and its elements.
-     * @param {String} value   Value of the store
-     * @param {Object} options Options
-     */
-    Store.prototype.set = function( value, options ) {
-        var _i, node;
-
-        if ( 'object' == typeof value ) value = value[ this.name ];
-
-        if ( !value ) value = '';
-
-        for ( _i = this.list.length - 1; _i >= 0; _i-- ) {
-            node = this.list[ _i ];
-
-            if ( 'value' in node ) node.value = value;
-            else node.innerHTML = value;
-        }
-
-        this.value = value;
-
-        this.emit();
-
-        return this;
-    };
-
-    /**
-     * Return the value of the store.
-     * @return {String} Value of the store
-     */
-    Store.prototype.get = function() {
-        return this.value;
-    };
-
-    /**
-     * Set the 'to' property of the store to the first element in the store of interest.
-     * @param  {Object} store Store of interest
-     */
-    Store.prototype.compare = function( store ) {
-        if ( 'object' == typeof store ) {
-            this.to = store.list[ 0 ];
-        }
-        return this;
-    };
-
-    /**
-     * Change the elements and value of the store to the 'to' property set by compare()
-     * If an transition was specified, call the function with the done() function
-     * to indicate when the transition has completed, a reference to the 'animating-out' element
-     * and a cloned 'animating-in' element.
-     * @param  {Function} done Callback
-     */
-    Store.prototype.commit = function( done ) {
-        var that = this;
-
-        // Set value (if applicable) and run the done callback.
-        function complete() {
-            if ( value ) that.set( value );
-            if ( el ) {
-                if ( el.parentNode ) el.parentNode.removeChild( el );
+            if ( 'function' == typeof CustomEvent ) {
+                e = new CustomEvent( 'byda', options );
+            } else if ( d.createEvent ) {
+                e = d.createEvent( 'CustomEvent' );
+                e.initCustomEvent( 'byda', options.bubbles, options.cancelable, options.detail );
             }
-            return done && done( that.name );
-        }
 
-        if ( !this.to ) return complete(); // Complete the commit if no change is present.
+            w.dispatchEvent( e );
+        },
 
-        // If this.to is an element, set the value to the value attribute or innerHTML content. If
-        // not, set the value to this.to.
-        var value = isNode( this.to ) ? this.to.value || this.to.innerHTML : this.to;
-        var list = this.list; // Reference the list.
-        var el, clone;
+        /**
+         * Set the value of a store and its elements.
+         * @param {String} value   Value of the store
+         * @param {Object} options Options
+         */
+        set : function( value, options ) {
+            var _i, node;
 
-        if ( !value ) value = '';
+            if ( 'object' == typeof value ) value = value[ this.name ];
 
-        // If byda was initialized with an transition function corresponding to the name of the
-        // store, perform the transition with the 'animating-out' and 'animating-in' elements,
-        // and a callback function.
-        if ( 'function' == typeof this.transition ) {
-            for ( var _i = list.length - 1; _i >= 0; _i-- ) {
-                el = list[ _i ];
+            if ( !value ) value = '';
 
-                clone = el.cloneNode( true ); // Clone the 'animating-out' node.
+            for ( _i = this.list.length - 1; _i >= 0; _i-- ) {
+                node = this.list[ _i ];
 
-                el.setAttribute( 'data-' + suffix, '^' ); // Block the byda element to prevent duplicates
-
-                clone.innerHTML = value; // Set up the innerHTML content of the 'animating-in' node.
-
-                this.transition( el, clone, complete ); // Perform the transition
+                if ( 'value' in node ) node.value = value;
+                else node.innerHTML = value;
             }
-        } else {
-            complete();
+
+            this.value = value;
+
+            this.emit();
+
+            return this;
+        },
+
+        /**
+         * Return the value of the store.
+         * @return {String} Value of the store
+         */
+        get : function() {
+            return this.value;
+        },
+
+        /**
+         * Set the 'to' property of the store to the first element in the store of interest.
+         * @param  {Object} store Store of interest
+         */
+        compare : function( store ) {
+            if ( 'object' == typeof store ) {
+                this.to = store.list[ 0 ];
+            }
+            return this;
+        },
+
+        /**
+         * Change the elements and value of the store to the 'to' property set by compare()
+         * If an transition was specified, call the function with the done() function
+         * to indicate when the transition has completed, a reference to the 'animating-out' element
+         * and a cloned 'animating-in' element.
+         * @param  {Function} done Callback
+         */
+        commit : function( done ) {
+            var that = this;
+
+            // Set value (if applicable) and run the done callback.
+            function complete() {
+                if ( value ) that.set( value );
+                if ( el ) {
+                    if ( el.parentNode ) el.parentNode.removeChild( el );
+                }
+                return done && done( that.name );
+            }
+
+            if ( !this.to ) return complete(); // Complete the commit if no change is present.
+
+            // If this.to is an element, set the value to the value attribute or innerHTML content. If
+            // not, set the value to this.to.
+            var value = isNode( this.to ) ? this.to.value || this.to.innerHTML : this.to;
+            var list = this.list; // Reference the list.
+            var el, clone;
+
+            if ( !value ) value = '';
+
+            // If byda was initialized with an transition function corresponding to the name of the
+            // store, perform the transition with the 'animating-out' and 'animating-in' elements,
+            // and a callback function.
+            if ( 'function' == typeof this.transition ) {
+                for ( var _i = list.length - 1; _i >= 0; _i-- ) {
+                    el = list[ _i ];
+
+                    clone = el.cloneNode( true ); // Clone the 'animating-out' node.
+
+                    el.setAttribute( 'data-' + suffix, '^' ); // Block the byda element to prevent duplicates
+
+                    clone.innerHTML = value; // Set up the innerHTML content of the 'animating-in' node.
+
+                    this.transition( el, clone, complete ); // Perform the transition
+                }
+            } else {
+                complete();
+            }
         }
     };
 
@@ -396,9 +377,9 @@
         // If no options were passed, create a new empty options object.
         if ( !options ) options = {};
 
-        this.dom = parseAsDOM( options.dom ) || document;
+        this.dom = parseAsDOM( options.dom ) || d;
 
-        // Collect a flat list of Byda elements with the specified DOM ( or window.document )
+        // Collect a flat list of Byda elements with the specified DOM ( or w.d )
         this.list = getBydaElements( this.dom );
 
         this.transitions = options.transitions || {};
@@ -411,124 +392,126 @@
         this.organize(); // Organize the list into stores.
     }
 
-    /**
-     * Updates the flash with new stores
-     */
-    Flash.prototype.update = function() {
-        return this.organize( getBydaElements( this.dom ) );
-    };
+    Flash.prototype = {
+        /**
+         * Updates the flash with new stores
+         */
+        update : function() {
+            return this.organize( getBydaElements( this.dom ) );
+        },
 
-    /**
-     * Return the number of stores in the flash.
-     * @return {Number} Number of stores in the flash
-     */
-    Flash.prototype.count = function() {
-        var _i = 0;
+        /**
+         * Return the number of stores in the flash.
+         * @return {Number} Number of stores in the flash
+         */
+        count : function() {
+            var _i = 0;
 
-        for ( var store in this.stores ) _i++;
+            for ( var store in this.stores ) _i++;
 
-        return _i;
-    };
+            return _i;
+        },
 
-    /**
-     * Find and return a store in the flash by name.
-     * @param  {String} name Name of the store
-     * @return {Object}      Store
-     */
-    Flash.prototype.find = function( name ) {
-        return this.stores[ name ];
-    };
+        /**
+         * Find and return a store in the flash by name.
+         * @param  {String} name Name of the store
+         * @return {Object}      Store
+         */
+        find : function( name ) {
+            return this.stores[ name ];
+        },
 
-    /**
-     * Map a simulated list of changes to the flash with an object.
-     * @param  {Object} object  Object who's key/values correspond to the stores
-     * @param  {Object} options Options
-     */
-    Flash.prototype.map = function( object, options ) {
-        for ( var key in object ) {
-            if ( this.stores[ key ] ) this.stores[ key ].set( object[ key ] );
-        }
-
-        return this;
-    };
-
-    Flash.prototype.condense = function() {
-        var res = {};
-        var stores = this.stores;
-
-        for ( var store in stores ) res[ store ] = stores[ store ].get();
-
-        return res;
-    };
-
-    /**
-     * Compare stores in the flash to the stores in a flash of interest, and
-     * load changes into the stores of the source flash.
-     * @param  {Object} flash Flash
-     */
-    Flash.prototype.generate = function( flash ) {
-        for ( var name in this.stores ) {
-            this.stores[ name ].compare( flash.stores[ name ] );
-        }
-
-        return this;
-    };
-
-    /**
-     * Organize a list of elements into groups by their byda data-attribute value.
-     * @param  {Array} list Array of elements
-     */
-    Flash.prototype.organize = function( list ) {
-        var _i, node, name;
-
-        // Reset the stores object.
-        var stores = this.stores = {};
-
-        // If a list was provided, update the list belonging to the flash.
-        if ( list ) this.list = list;
-
-        // Loop through the list and create new stores.
-        for ( _i = this.list.length - 1; _i >= 0; _i-- ) {
-            node = this.list[ _i ];
-            name = node.getAttribute( 'data-' + suffix );
-
-            // Make a clone of the node if the flash is meant to be frozen.
-            if ( this.frozen ) node = node.cloneNode( true );
-
-            // Create a new store if one does not exist with the name.
-            if ( !stores[ name ] ) {
-                stores[ name ] = new Store( name, node.value || node.innerHTML, this.transitions[ name ] || transitions[ name ] );
+        /**
+         * Map a simulated list of changes to the flash with an object.
+         * @param  {Object} object  Object who's key/values correspond to the stores
+         * @param  {Object} options Options
+         */
+        map : function( object, options ) {
+            for ( var key in object ) {
+                if ( this.stores[ key ] ) this.stores[ key ].set( object[ key ] );
             }
 
-            // Push the reference or newly cloned element to the store.
-            stores[ name ].list.push( node );
+            return this;
+        },
+
+        condense : function() {
+            var res = {};
+            var stores = this.stores;
+
+            for ( var store in stores ) res[ store ] = stores[ store ].get();
+
+            return res;
+        },
+
+        /**
+         * Compare stores in the flash to the stores in a flash of interest, and
+         * load changes into the stores of the source flash.
+         * @param  {Object} flash Flash
+         */
+        generate : function( flash ) {
+            for ( var name in this.stores ) {
+                this.stores[ name ].compare( flash.stores[ name ] );
+            }
+
+            return this;
+        },
+
+        /**
+         * Organize a list of elements into groups by their byda data-attribute value.
+         * @param  {Array} list Array of elements
+         */
+        organize : function( list ) {
+            var _i, node, name;
+
+            // Reset the stores object.
+            var stores = this.stores = {};
+
+            // If a list was provided, update the list belonging to the flash.
+            if ( list ) this.list = list;
+
+            // Loop through the list and create new stores.
+            for ( _i = this.list.length - 1; _i >= 0; _i-- ) {
+                node = this.list[ _i ];
+                name = node.getAttribute( 'data-' + suffix );
+
+                // Make a clone of the node if the flash is meant to be frozen.
+                if ( this.frozen ) node = node.cloneNode( true );
+
+                // Create a new store if one does not exist with the name.
+                if ( !stores[ name ] ) {
+                    stores[ name ] = new Store( name, node.value || node.innerHTML, this.transitions[ name ] || transitions[ name ] );
+                }
+
+                // Push the reference or newly cloned element to the store.
+                stores[ name ].list.push( node );
+            }
+
+            return this;
+        },
+
+        /**
+         * Call the commit method of each store in the flash
+         * @param  {Function} start  Function fired after every commit is triggered
+         * @param  {Function} finish Callback fired after every commit has completed
+         */
+        run : function( start, finish ) {
+            var count = this.count();
+            var finished = []; // An array of completed stores.
+
+            // A callback run when a commit is completed.
+            function done( detail ) {
+                finished.push( detail ); // Push the details to the finished array.
+
+                // If the number of stores in the flash equals the number of stores in the finished
+                // array, run the finish callback.
+                if ( count == finished.length ) return finish && finish();
+            }
+
+            // Begin each of the commit functions.
+            for ( var store in this.stores ) this.stores[ store ].commit( done );
+
+            if ( 'function' == typeof start ) start.apply( this ); // Run the specified start function.
         }
-
-        return this;
-    };
-
-    /**
-     * Call the commit method of each store in the flash
-     * @param  {Function} start  Function fired after every commit is triggered
-     * @param  {Function} finish Callback fired after every commit has completed
-     */
-    Flash.prototype.run = function( start, finish ) {
-        var count = this.count();
-        var finished = []; // An array of completed stores.
-
-        // A callback run when a commit is completed.
-        function done( detail ) {
-            finished.push( detail ); // Push the details to the finished array.
-
-            // If the number of stores in the flash equals the number of stores in the finished
-            // array, run the finish callback.
-            if ( count == finished.length ) return finish && finish();
-        }
-
-        // Begin each of the commit functions.
-        for ( var store in this.stores ) this.stores[ store ].commit( done );
-
-        if ( 'function' == typeof start ) start.apply( this ); // Run the specified start function.
     };
 
     /**

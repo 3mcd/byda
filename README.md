@@ -1,5 +1,5 @@
 #byda.js [![Build Status](https://travis-ci.org/ericmcdaniel/byda.svg?branch=master)](https://travis-ci.org/ericmcdaniel/byda)
-###2.0.4
+###2.1.0
 
 Byda is a JavaScript library that facilitates content swapping ( without
 page reload ) via
@@ -152,8 +152,8 @@ executed with `this` bound to a new flash. For example:
 ```javascript
 var one, two;
 
-byda( function() {
-    one = this;
+byda( function( view ) {
+    one = view;
 });
 
 two = byda.flash();
@@ -164,16 +164,12 @@ two = byda.flash();
 ##Core
 
 The Byda public API is accessed through the `byda` method. This method can be
-initialized with the options `file`, `view`, `json`, `transitions`, and `dom`,
+initialized with the options `file`, `view`, `transitions`, and `dom`,
 where:
 
 * `file` is the path of a file to be parsed as HTML,
 
 * `view` is simply shorthand for `file: 'views/' + file + '.html'`,
-
-* `json` is an object formatted in key-value pairs ( where the key is an
-identifier and the value is a path to the json file ) or the path to the json
-file as a string,
 
 * `transitions` is an object formatted in key-value pairs where the key is the
 name of a store and the value is a function passed back reference to an element
@@ -183,12 +179,11 @@ complete function ( done ),
 * and `dom` is a 'container' or 'parent' element to contain the Flash to.
 
 You can pass a callback to the `byda()` function as the second parameter. The
-function will be executed with `this` bound to a new Flash, and one paramter
-`data` that contains the JSON response objects.
+function will be executed with the first parameter bound to a new Flash.
 
-###this
+###view
 
-The `this` value of the callback will be a _Flash_ object that contains
+The first parameter of the callback will be a _Flash_ object that contains
 important info about the newly loaded content. This object includes a 'stores'
 object that contains elements organized by their data-attribute value. Each
 organization is called a Store.
@@ -201,38 +196,15 @@ organization is called a Store.
 ```
 
 ```javascript
-byda( 'path/to/file.html' , function( ) {
+byda( 'path/to/file.html' , function( view ) {
 	// Access the title store (which contains one element)
-	this.find( 'title' ).get(); // returns 'Byda Example'
+	view.find( 'title' ).get(); // returns 'Byda Example'
 } );
-```
-
-###data
-
-`data` is an object that contains any JSON you want to load alongside
-the byda() function.
-
-```javascript
-var calendar = {
-    options: {
-        view: 'calendar',
-        json: { 'activites' : 'includes/json/activities.json' },
-    },
-    action: function( data ) {
-        var activities = data.activities;
-
-        $.each( days, function( index, value ) {
-            $( '#calendar' ).append( index + ': ' + activities[index] );
-        } );
-    }
-};
-
-byda( calendar.options, calendar.action );
 ```
 
 ##pushState
 
-Combining byda with pushState is a useful idea. [Page.js](http://visionmedia.github.io/page.js/) is a micro-router that
+Combining byda with pushState is pretty cool. [Page.js](http://visionmedia.github.io/page.js/) is a micro-router that
 lets us utilize pushState routing for our app:
 
 ```javascript
@@ -314,12 +286,12 @@ A blocker is any data-load value with a trailing `^`.
 ```
 
 ```js
-byda( function() {
-    this.find( 'content' ); // Outer element
+byda( function( view ) {
+    view.find( 'content' ); // Outer element
 });
 
-byda( { dom: document.getElementById( 'Module' ) }, function() {
-    this.find( 'content' ); // Inner element
+byda( { dom: document.getElementById( 'Module' ) }, function( view ) {
+    view.find( 'content' ); // Inner element
 });
 ```
 
@@ -332,8 +304,7 @@ Load data into your document by data attributes through XHR or HTML5 imports
 | Option   | typeof   | Description                                                                      |
 |----------|----------|----------------------------------------------------------------------------------|
 | dom      | string / object   | A string to be parsed as HTML or node at which the byda function begins ( or is scoped ) |
-| file     | string   | Path to a file to use as the basis for swapping the content of byda elements.    |
-| json     | string   | The path to a .json file to load alongside the view.                             |
+| file     | string   | Path to a file to use as the basis for swapping the content of byda elements.    |fj
 | view     | string   | Shorthand for `{ file: 'views/' + path + '.html' }`                              |
 
 ###byda.base

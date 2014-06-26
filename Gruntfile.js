@@ -4,7 +4,7 @@ module.exports = function(grunt) {
     grunt.initConfig({
         jasmine: {
             byda: {
-                src: 'index.js',
+                src: 'index.min.js',
                 options: {
                     keepRunner: true,
                     template: 'spec/runner.tmpl',

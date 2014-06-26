@@ -32,15 +32,9 @@ describe("Byda public API", function() {
         expect(byda()).toBeUndefined();
     });
 
-    it("byda.flash() should generate a Flash given a DOM string", function() {
-        expect(typeof dummy).toBe('object');
-        expect(dummy.constructor.name).toBe('Flash');
-    });
-
     it("Flash.prototype.find should return a store or undefined", function() {
         expect(dummy.find('fail')).toBeUndefined();
 
-        expect(dummyStore.constructor.name).toBe('Store');
         expect(dummyStore.list.length).toEqual(1);
         expect(dummyStore.list[0].nodeType).toBeTruthy();
     });
