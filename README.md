@@ -1,5 +1,5 @@
 #byda.js [![Build Status](https://travis-ci.org/ericmcdaniel/byda.svg?branch=master)](https://travis-ci.org/ericmcdaniel/byda)
-###2.1.0
+###2.1.1
 
 Byda is a JavaScript library that facilitates content swapping ( without
 page reload ) via
@@ -8,7 +8,7 @@ page reload ) via
 library provides a public API that allows it to be implemented in a variety
 of ways outside the core implementation.
 
-Byda is currently ~4.5kb minified and ~2k minified + gzipped.
+Byda is currently ~3.9kb minified and ~1.7k minified + gzipped.
 
 ### Concept
 
