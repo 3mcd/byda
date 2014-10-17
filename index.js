@@ -107,9 +107,6 @@
         // Assume a string passed as the first parameter is a path to a file.
         if ( 'string' == typeof options ) options = { file: options };
 
-        // options.view is shorthand for 'views/{name}.html'.
-        if ( options.view ) options.file = 'views/' + options.view + '.html';
-
         // If a base path is specified, prepend it to the file path.
         options.file = base ? base + '/' + options.file : options.file;
 
