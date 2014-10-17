@@ -87,7 +87,7 @@ Here is a very simple example of content loading with Byda.
 		</div>
 	</div>
 	<script>
-		byda( { view: 'home' } );
+		byda( { file: 'views/home.html' } );
 	</script>
 </body>
 ...
@@ -152,12 +152,10 @@ two = byda.flash();
 ##Core
 
 The Byda public API is accessed through the `byda` method. This method can be
-initialized with the options `file`, `view`, `transitions`, and `dom`,
+initialized with the options `file`, `transitions`, and `dom`,
 where:
 
 * `file` is the path of a file to be parsed as HTML,
-
-* `view` is simply shorthand for `file: 'views/' + file + '.html'`,
 
 * `transitions` is an object formatted in key-value pairs where the key is the
 name of a store and the value is a function passed back reference to an element
@@ -239,7 +237,7 @@ var slideAnimation = function( from, to, done ) {
 ...
 
 byda({
-    view: 'main',
+    file: 'views/main.html',
     transitions: {
         content: slideAnimation
     }
