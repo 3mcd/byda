@@ -1,5 +1,4 @@
 #byda.js [![Build Status](https://travis-ci.org/ericmcdaniel/byda.svg?branch=master)](https://travis-ci.org/ericmcdaniel/byda)
-###2.1.1
 
 Note: This library is no longer maintained.
 
