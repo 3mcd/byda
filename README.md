@@ -1,6 +1,8 @@
 #byda.js [![Build Status](https://travis-ci.org/ericmcdaniel/byda.svg?branch=master)](https://travis-ci.org/ericmcdaniel/byda)
 ###2.1.1
 
+Note: This library is no longer maintained.
+
 Byda is a JavaScript library that facilitates content swapping ( without
 page reload ) via
 [HTML5 imports](http://www.html5rocks.com/en/tutorials/webcomponents/imports/) or [XHR](http://en.wikipedia.org/wiki/XMLHttpRequest) ( Ajax ). Byda does not provide any
